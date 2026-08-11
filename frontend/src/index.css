@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+html.light { color-scheme: light; }
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: "Inter", sans-serif;
+  @apply bg-cream-100 text-ink-900 dark:bg-ink-950 dark:text-cream-50;
+  transition: background-color .25s ease, color .25s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------- */
+/* Surfaces                                                          */
+/* Light: white cards on cream, soft shadow (BizLink)                */
+/* Dark : raised charcoal cards on near-black, hairline border (flux)*/
+/* ---------------------------------------------------------------- */
+.card {
+  @apply bg-white dark:bg-ink-800
+         border border-cream-300/60 dark:border-white/[0.07]
+         shadow-card dark:shadow-card-dark
+         rounded-card;
+}
+
+.card-raised {
+  @apply bg-white dark:bg-ink-700
+         border border-cream-300/60 dark:border-white/[0.09]
+         shadow-lift dark:shadow-card-dark
+         rounded-card;
+}
+
+/* Inverted card - flux uses one dark tile among light ones for emphasis */
+.card-invert {
+  @apply bg-ink-900 dark:bg-ink-700 text-cream-50
+         border border-ink-700 dark:border-white/[0.09]
+         shadow-lift rounded-card;
+}
+
+.sidebar-surface {
+  @apply bg-ink-900 dark:bg-ink-950
+         border-r border-white/[0.07];
+}
+
+/* ---------------------------------------------------------------- */
+/* Text contrast - fixes "nothing is visible in dark mode"           */
+/* ---------------------------------------------------------------- */
+.t-primary   { @apply text-ink-900 dark:text-white; }
+.t-secondary { @apply text-ink-600 dark:text-cream-200/85; }
+.t-muted     { @apply text-ink-500/80 dark:text-cream-200/55; }
+.t-faint     { @apply text-ink-500/60 dark:text-cream-200/40; }
+
+.label-cap {
+  @apply text-[11px] font-semibold uppercase tracking-[0.08em] t-muted;
+}
+
+/* Numeric telemetry - machine-console feel */
+.telemetry {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.hairline { @apply border-t border-cream-300/70 dark:border-white/[0.07]; }
+
+/* ---------------------------------------------------------------- */
+/* Status                                                            */
+/* ---------------------------------------------------------------- */
+.status-dot { @apply inline-block w-2.5 h-2.5 rounded-full shrink-0; }
+.status-dot.pulsing { animation: pulseDot 1.8s ease-in-out infinite; }
+
+.chip {
+  @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-pill
+         text-[11px] font-semibold;
+}
+.chip-ok      { @apply bg-ok/15 text-ok; }
+.chip-warn    { @apply bg-warn/15 text-warn; }
+.chip-danger  { @apply bg-danger/15 text-danger; }
+.chip-offline { @apply bg-offline/15 text-offline; }
+.chip-lime    { @apply bg-lime-400/20 text-lime-600 dark:text-lime-300; }
+.chip-neutral { @apply bg-cream-200 dark:bg-ink-600 t-secondary; }
+
+/* ---------------------------------------------------------------- */
+/* Buttons                                                           */
+/* ---------------------------------------------------------------- */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+         rounded-pill text-sm font-semibold transition-all
+         disabled:opacity-45 disabled:pointer-events-none;
+}
+.btn-primary {
+  @apply btn bg-lime-400 text-ink-950 hover:bg-lime-300
+         shadow-[0_2px_12px_rgba(214,248,76,0.25)];
+}
+.btn-dark {
+  @apply btn bg-ink-900 text-cream-50 hover:bg-ink-800
+         dark:bg-white dark:text-ink-900 dark:hover:bg-cream-100;
+}
+.btn-ghost {
+  @apply btn bg-transparent t-secondary
+         hover:bg-cream-200/70 dark:hover:bg-ink-700;
+}
+.btn-outline {
+  @apply btn bg-transparent border t-secondary
+         border-cream-300 dark:border-white/15
+         hover:border-lime-400 hover:text-lime-600 dark:hover:text-lime-300;
+}
+.btn-danger { @apply btn bg-danger text-white hover:brightness-110; }
+
+/* ---------------------------------------------------------------- */
+/* Inputs                                                            */
+/* ---------------------------------------------------------------- */
+.field {
+  @apply w-full px-4 py-3 rounded-2xl text-sm t-primary
+         bg-cream-50 dark:bg-ink-700
+         border border-cream-300 dark:border-white/10
+         outline-none transition-colors
+         placeholder:text-ink-500/60 dark:placeholder:text-cream-200/40
+         focus:border-lime-400 focus:ring-2 focus:ring-lime-400/25;
+}
+
+/* Range slider styled as a machine-control dial */
+input[type="range"].dial {
+  -webkit-appearance: none; appearance: none;
+  height: 6px; border-radius: 999px; width: 100%;
+  background: linear-gradient(to right,
+    #D6F84C 0%, #D6F84C var(--fill,50%),
+    rgba(140,146,158,.28) var(--fill,50%), rgba(140,146,158,.28) 100%);
+}
+input[type="range"].dial::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #D6F84C; border: 3px solid #14151A;
+  box-shadow: 0 0 0 1px rgba(214,248,76,.6), 0 2px 8px rgba(0,0,0,.45);
+  cursor: pointer; margin-top: -7px;
+}
+input[type="range"].dial::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #D6F84C; border: 3px solid #14151A; cursor: pointer;
+}
+
+/* ---------------------------------------------------------------- */
+/* Scrollbar + focus                                                 */
+/* ---------------------------------------------------------------- */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  @apply bg-ink-500/30 dark:bg-ink-600 rounded-pill;
+}
+::-webkit-scrollbar-thumb:hover { @apply bg-lime-500/60; }
+
+:focus-visible {
+  outline: 2px solid #D6F84C;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Skeleton shimmer for loading states */
+.skeleton {
+  @apply relative overflow-hidden bg-cream-200 dark:bg-ink-700 rounded-lg;
+}
+.skeleton::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent,
+              rgba(255,255,255,.14), transparent);
+  animation: sweep 1.8s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(1.3); }
+}
+@keyframes sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
