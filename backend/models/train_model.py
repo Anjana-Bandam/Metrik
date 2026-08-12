@@ -22,7 +22,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
-from sklearn.metrics import roc_auc_score, classification_report
+from sklearn.metrics import roc_auc_score, classification_report, precision_score, recall_score, f1_score
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -136,6 +136,26 @@ proba = model.predict_proba(X_test_scaled)[:, 1]
 auc = roc_auc_score(y_test, proba)
 print(f"[Metrik] Test ROC-AUC: {auc:.4f}")
 print(classification_report(y_test, (proba >= 0.5).astype(int)))
+
+# ---------------------------------------------------------------------------
+# 9b. Metrics at the app's ACTUAL red-alert threshold, not the generic 0.5
+#     cutoff sklearn uses by default. This is the number that matches what
+#     a judge sees on screen when Metrik shows a red "act now" card.
+# ---------------------------------------------------------------------------
+APP_RED_THRESHOLD = 0.70
+
+pred_at_app_threshold = (proba >= APP_RED_THRESHOLD).astype(int)
+app_precision = precision_score(y_test, pred_at_app_threshold, zero_division=0)
+app_recall = recall_score(y_test, pred_at_app_threshold, zero_division=0)
+app_f1 = f1_score(y_test, pred_at_app_threshold, zero_division=0)
+
+print("=" * 60)
+print(f"[Metrik] METRICS AT THE APP'S ACTUAL RED-ALERT THRESHOLD ({APP_RED_THRESHOLD:.0%})")
+print("=" * 60)
+print(f"  Precision : {app_precision:.1%}   (of everything flagged RED, this %% was a real failure)")
+print(f"  Recall    : {app_recall:.1%}   (of all real failures, this %% was caught)")
+print(f"  F1        : {app_f1:.3f}")
+print("=" * 60)
 
 # ---------------------------------------------------------------------------
 # 10. Persist artifacts
