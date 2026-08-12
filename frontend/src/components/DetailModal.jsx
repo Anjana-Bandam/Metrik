@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   X, Download, Clock, DollarSign, Info, Wrench, Gauge as GaugeIcon,
-  Check, BellOff, Radio, Activity, PowerOff,
+  Check, BellOff, Radio, Activity, PowerOff, FastForward,
 } from "lucide-react";
 import GaugeChart from "./GaugeChart.jsx";
 import ShapChart from "./ShapChart.jsx";
@@ -10,7 +10,6 @@ import ToolChangeModal from "./ToolChangeModal.jsx";
 import { api, downloadJson, STATE_STYLE, RISK_STYLE } from "../api.js";
 import { downloadMachinePdf } from "../reportPdf.js";
 import { useAuth } from "../auth.jsx";
-
 const STATES = [
   ["RUNNING", "Running", Activity],
   ["IDLE", "Idle", Radio],
@@ -59,6 +58,19 @@ export default function DetailModal({ machine, onClose, onRefresh }) {
     finally { setBusy(false); }
   };
 
+
+const handleFastMode = async (enabled) => {
+    setBusy(true);
+    try {
+      await api.setFastMode(machine.machine_id, enabled);
+      flash(enabled ? "Fast simulation ON — watch the numbers climb." : "Back to normal speed.");
+      onRefresh?.();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+
   const sensors = [
     ["Spindle speed", machine.sensors.spindle_speed.toFixed(0), "rpm"],
     ["Feed rate", machine.sensors.feed_rate.toFixed(1), "Nm"],
@@ -91,9 +103,27 @@ export default function DetailModal({ machine, onClose, onRefresh }) {
                 {machine.location} · {machine.tool_material} tool · material grade {machine.material_type}
               </p>
             </div>
-            <button onClick={onClose} className="btn-ghost w-10 h-10 !p-0 rounded-pill shrink-0">
-              <X size={18} />
-            </button>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => handleFastMode(!machine.fast_mode)}
+                disabled={busy || machine.state !== "RUNNING"}
+                title={machine.state !== "RUNNING"
+                  ? "Set this machine to Running first"
+                  : "Toggle fast simulation speed"}
+                className={`flex items-center gap-1.5 px-3.5 h-10 rounded-pill text-xs font-semibold transition-colors ${
+                  machine.fast_mode
+                    ? "bg-violet-500 text-white"
+                    : "bg-cream-200 dark:bg-ink-600 t-secondary hover:bg-cream-300 dark:hover:bg-ink-500"
+                } ${busy || machine.state !== "RUNNING" ? "opacity-40 cursor-not-allowed" : ""}`}>
+                <FastForward size={14} />
+                {machine.fast_mode ? "Fast: ON" : "Fast sim"}
+              </button>
+
+              <button onClick={onClose} className="btn-ghost w-10 h-10 !p-0 rounded-pill">
+                <X size={18} />
+              </button>
+            </div>
           </div>
 
           {/* Recommended action banner — the thing an operator actually acts on */}
@@ -246,6 +276,9 @@ export default function DetailModal({ machine, onClose, onRefresh }) {
                     state change.
                   </p>
                 </div>
+                
+
+               
 
                 {machine.tool_changes?.length > 0 && (
                   <div className="card p-4">

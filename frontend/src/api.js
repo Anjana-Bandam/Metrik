@@ -65,6 +65,28 @@ export const api = {
 
   exportMachineUrl: (id) => `${BASE}/export/machine/${id}`,
   exportDashboardUrl: () => `${BASE}/export/dashboard`,
+
+
+  predictCsv: async (file) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    const token = localStorage.getItem("metrik-token");
+    const res = await fetch("/api/predict_csv", {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: fd,
+    });
+    if (!res.ok) throw new Error("CSV prediction failed");
+    return res.json();
+  },
+
+
+
+   setFastMode: (id, enabled) =>
+    request(`/machine/${id}/fast_mode`, {
+      method: "POST",
+      body: JSON.stringify({ enabled }),
+    }),
 };
 
 /** Downloads a JSON export. Needs the auth header, so we fetch then blob it. */

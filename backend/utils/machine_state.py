@@ -87,6 +87,8 @@ class Machine:
     tool_changes: List[ToolChangeEvent] = field(default_factory=list)
     acks: List[AlertAck] = field(default_factory=list)
     risk_history: List[float] = field(default_factory=list)
+    smoothed_risk: Optional[float] = None
+    fast_mode: bool = False
 
     def __post_init__(self):
         # Setpoints default to whatever the machine was created with
@@ -176,7 +178,8 @@ class Machine:
         self.tool_changes.append(ev)
         self.tool_runtime = 0.0                    # fresh tool
         self.feed_rate = self.nominal_feed         # load drops back immediately
-        self.risk_history = []                     # old tool's trend is not this tool's
+        self.risk_history = []
+        self.smoothed_risk = None                       # old tool's trend is not this tool's
         self.state = RUNNING
         return ev
 
