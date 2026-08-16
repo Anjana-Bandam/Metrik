@@ -29,6 +29,12 @@ export default function DetailModal({ machine, onClose, onRefresh }) {
   const rk = RISK_STYLE[machine.status] || RISK_STYLE.green;
   const offline = machine.state === "OFFLINE";
 
+  const wear = machine.wear;
+  // Alert thresholds are model outputs, not UI constants — they move whenever
+  // the model is recalibrated, so they arrive with the snapshot. The fallbacks
+  // only cover an API older than this build.
+  const bands = machine.risk_bands || { watch: 40, alert: 70 };
+
   const flash = (msg) => { setToast(msg); setTimeout(() => setToast(""), 2600); };
 
   const handleToolChange = async (worn, note) => {
@@ -73,7 +79,7 @@ const handleFastMode = async (enabled) => {
 
   const sensors = [
     ["Spindle speed", machine.sensors.spindle_speed.toFixed(0), "rpm"],
-    ["Feed rate", machine.sensors.feed_rate.toFixed(1), "Nm"],
+    ["Spindle torque", machine.sensors.spindle_torque.toFixed(1), "Nm"],
     ["Depth of cut", machine.sensors.depth_of_cut, "mm"],
     ["Tool runtime", machine.sensors.tool_runtime.toFixed(0), "min"],
     ["Cutting speed", machine.life.cutting_speed_m_min, "m/min"],
@@ -159,49 +165,171 @@ const handleFastMode = async (enabled) => {
           )}
 
           <div className="p-6 grid lg:grid-cols-2 gap-5">
-            {/* Gauge */}
-            <div className="card p-5">
-              <p className="label-cap mb-1">Wear probability</p>
-              {offline ? (
-                <div className="h-[240px] grid place-items-center text-center">
-                  <div>
-                    <PowerOff size={28} className="mx-auto t-faint mb-3" />
-                    <p className="text-sm t-muted max-w-[220px]">
-                      No live signal. Metrik does not estimate risk for machines
-                      it can't hear from.
+            {/* The two headline numbers, side by side and drawn as the same
+                instrument so they can be read together. They come from two
+                different models validated on two different datasets, which is
+                why each carries its own provenance line rather than sharing
+                one caption. */}
+            <div className="card p-5 lg:col-span-2">
+              <div className="grid sm:grid-cols-2 gap-5 sm:divide-x divide-cream-200 dark:divide-ink-600">
+
+                {/* Tool wear — the physical measurement */}
+                <div className="sm:pr-5">
+                  <div className="flex items-baseline justify-between gap-2 mb-1">
+                    <p className="label-cap">Tool wear</p>
+                    <span className="text-[10px] t-faint">flank wear · VB</span>
+                  </div>
+
+                  {offline ? (
+                    <div className="h-[240px] grid place-items-center text-center">
+                      <p className="text-sm t-muted max-w-[220px]">
+                        No live signal to measure wear from.
+                      </p>
+                    </div>
+                  ) : wear?.available ? (
+                    <GaugeChart
+                      value={wear.wear_mm}
+                      max={wear.limit_mm}
+                      suffix=" mm"
+                      decimals={3}
+                      watch={wear.watch_mm}
+                      alert={wear.alert_mm}
+                      band={wear.status}
+                      height={240}
+                    />
+                  ) : (
+                    <div className="h-[240px] grid place-items-center text-center px-4">
+                      <div>
+                        <Wrench size={26} className="mx-auto t-faint mb-3" />
+                        <p className="text-sm t-muted">{wear?.reason || "No wear reading yet."}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Remaining useful life — the number an operator actually
+                      acts on. Wear in mm says how bad it is; this says how long
+                      they have. Shown as a range because a point estimate would
+                      claim precision the projection does not have. */}
+                  <div className="hairline pt-4 mt-2">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <p className="text-[10px] t-faint uppercase tracking-wide">
+                        Time until tool change
+                      </p>
+                      {wear?.rul_min != null && (
+                        <span className="text-[10px] t-faint telemetry">
+                          {wear.rul_low_min}–{wear.rul_high_min} min
+                        </span>
+                      )}
+                    </div>
+                    <p className="telemetry text-2xl font-bold t-primary mt-0.5">
+                      {wear?.rul_min != null
+                        ? <>{wear.rul_min}<span className="text-xs t-faint ml-1">min</span></>
+                        : <span className="text-base t-muted font-normal">
+                            {wear?.available ? "Establishing trend…" : "—"}
+                          </span>}
                     </p>
                   </div>
-                </div>
-              ) : (
-                <GaugeChart value={machine.risk_pct} band={machine.status} height={240}
-                  low={`${Math.round(machine.life.remaining_low_min)}m`}
-                  high={`${Math.round(machine.life.remaining_high_min)}m`} />
-              )}
 
-              <div className="hairline pt-4 mt-2 grid grid-cols-3 gap-3">
-                {[
-                  [Clock, machine.est_time_to_failure, "est. life left"],
-                  [GaugeIcon, `${machine.life.life_consumed_pct.toFixed(0)}%`, "life consumed"],
-                  [DollarSign, `$${machine.cost_impact.toFixed(0)}`, "scrap exposure"],
-                ].map(([Icon, val, lab]) => (
-                  <div key={lab} className="flex items-start gap-2">
-                    <Icon size={14} className="t-faint mt-0.5 shrink-0" />
-                    <div className="min-w-0">
-                      <p className="telemetry text-sm font-bold t-primary">{offline ? "—" : val}</p>
-                      <p className="text-[10px] t-faint leading-tight">{lab}</p>
+                  <div className="hairline pt-3 mt-3 grid grid-cols-2 gap-3">
+                    <div className="flex items-start gap-2">
+                      <GaugeIcon size={14} className="t-faint mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="telemetry text-sm font-bold t-primary">
+                          {wear?.available ? `${wear.wear_pct_of_limit.toFixed(0)}%` : "—"}
+                        </p>
+                        <p className="text-[10px] t-faint leading-tight">of ISO 8688 limit</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Wrench size={14} className="t-faint mt-0.5 shrink-0" />
+                      <div className="min-w-0">
+                        <p className="telemetry text-sm font-bold t-primary">
+                          {wear?.wear_rate_mm_per_min
+                            ? `${(wear.wear_rate_mm_per_min * 1000).toFixed(2)} µm`
+                            : "—"}
+                        </p>
+                        <p className="text-[10px] t-faint leading-tight">wear per minute</p>
+                      </div>
                     </div>
                   </div>
-                ))}
+
+                  <p className="text-[10px] t-faint leading-relaxed mt-3">
+                    Estimated from cutting force, vibration and acoustic emission.
+                    Trained on real PHM&nbsp;2010 cutters, ±16&nbsp;µm.
+                    {wear?.alert_mm && (
+                      <> Change-out alert at {wear.alert_mm}&nbsp;mm, set below the{" "}
+                      {wear.true_change_point_mm}&nbsp;mm limit because the model
+                      under-reads on a heavily worn edge — validated to catch
+                      100% of worn tools.</>
+                    )}
+                  </p>
+                </div>
+
+                {/* Scrap risk — the calibrated probability */}
+                <div className="sm:pl-5">
+                  <div className="flex items-baseline justify-between gap-2 mb-1">
+                    <p className="label-cap">Scrap risk</p>
+                    <span className="text-[10px] t-faint">calibrated probability</span>
+                  </div>
+
+                  {offline ? (
+                    <div className="h-[240px] grid place-items-center text-center">
+                      <div>
+                        <PowerOff size={26} className="mx-auto t-faint mb-3" />
+                        <p className="text-sm t-muted max-w-[220px]">
+                          No live signal. Metrik does not estimate risk for machines
+                          it can't hear from.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <GaugeChart
+                      value={machine.risk_pct}
+                      max={100}
+                      suffix="%"
+                      watch={bands.watch}
+                      alert={bands.alert}
+                      band={machine.status}
+                      height={240}
+                      low={`${Math.round(machine.life.remaining_low_min)}m`}
+                      high={`${Math.round(machine.life.remaining_high_min)}m`}
+                    />
+                  )}
+
+                  <div className="hairline pt-4 mt-2 grid grid-cols-3 gap-3">
+                    {[
+                      [Clock, machine.est_time_to_failure, "est. life left"],
+                      [GaugeIcon, `${machine.life.life_consumed_pct.toFixed(0)}%`, "life consumed"],
+                      [DollarSign, `$${machine.cost_impact.toFixed(0)}`, "scrap exposure"],
+                    ].map(([Icon, val, lab]) => (
+                      <div key={lab} className="flex items-start gap-2">
+                        <Icon size={14} className="t-faint mt-0.5 shrink-0" />
+                        <div className="min-w-0">
+                          <p className="telemetry text-sm font-bold t-primary">{offline ? "—" : val}</p>
+                          <p className="text-[10px] t-faint leading-tight">{lab}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="text-[10px] t-faint leading-relaxed mt-3">
+                    Probability this cut ends in a wear-driven scrap event.
+                    Amber from {bands.watch}%, act from {bands.alert}%.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* SHAP */}
-            <div className="card p-5">
-              <p className="label-cap mb-1">What's driving this prediction</p>
-              <ShapChart shapValues={machine.shap_values} height={240} />
+            {/* SHAP — full width. It is a horizontal bar chart with long
+                feature names, so a half-width column wastes the labels and
+                leaves an empty half-row beside it. */}
+            <div className="card p-5 lg:col-span-2">
+              <p className="label-cap mb-1">What's driving the scrap-risk score</p>
+              <ShapChart shapValues={machine.shap_values} height={260} />
               <p className="text-[11px] t-faint mt-3 leading-relaxed">
                 Contributions are for this single prediction and re-computed
-                every reading — not a fixed model-wide ranking.
+                every reading — not a fixed model-wide ranking. These explain the
+                scrap-risk classifier; the wear estimate is a separate model.
               </p>
             </div>
 

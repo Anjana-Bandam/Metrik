@@ -45,7 +45,7 @@ export default function ReportsPage() {
                 Model accuracy on this plant
               </p>
             </div>
-            {feedback?.accuracy_pct === null || !feedback?.total ? (
+            {!feedback?.total ? (
               <>
                 <p className="font-display font-bold text-2xl text-cream-50 mt-2">
                   No feedback yet
@@ -57,6 +57,26 @@ export default function ReportsPage() {
                   accurate for your specific machines and materials over time.
                 </p>
               </>
+            ) : !feedback.enough_data ? (
+              /* A ratio over a handful of verdicts is noise. Show the raw
+                 tally and how many more are needed, rather than a headline
+                 percentage that reads as precision the data cannot support. */
+              <>
+                <div className="flex items-end gap-3 mt-2">
+                  <span className="telemetry font-display font-bold text-4xl text-cream-50">
+                    {feedback.correct}/{feedback.total}
+                  </span>
+                  <span className="text-sm text-cream-200/60 mb-1.5">
+                    verdicts matched so far
+                  </span>
+                </div>
+                <p className="text-sm text-cream-200/60 mt-3 max-w-lg leading-relaxed">
+                  Metrik needs at least {feedback.min_events} logged verdicts before
+                  it will quote a percentage — below that, a single lucky call
+                  reads as “100% accurate”. {feedback.min_events - feedback.total} more
+                  to go.
+                </p>
+              </>
             ) : (
               <>
                 <div className="flex items-end gap-3 mt-2">
@@ -64,15 +84,23 @@ export default function ReportsPage() {
                     {feedback.accuracy_pct}%
                   </span>
                   <span className="text-sm text-cream-200/60 mb-2">
-                    {feedback.correct} of {feedback.total} predictions confirmed
-                    correct
+                    95% CI {feedback.ci_low}–{feedback.ci_high}% ·{" "}
+                    {feedback.correct} of {feedback.total} verdicts matched
                   </span>
                 </div>
-                <p className="text-sm text-cream-200/60 mt-3 max-w-lg leading-relaxed">
-                  Scored against operator verdicts at tool change. These
-                  labelled events are what retraining runs on.
-                </p>
+                <div className="flex flex-wrap gap-x-5 gap-y-1 mt-3 text-xs text-cream-200/55 telemetry">
+                  <span>flagged &amp; worn {feedback.breakdown.tp}</span>
+                  <span>flagged, not worn {feedback.breakdown.fp}</span>
+                  <span>quiet &amp; fine {feedback.breakdown.tn}</span>
+                  <span>missed {feedback.breakdown.fn}</span>
+                </div>
               </>
+            )}
+
+            {feedback?.total > 0 && (
+              <p className="text-xs text-cream-200/45 mt-4 max-w-lg leading-relaxed">
+                {feedback.caveat}
+              </p>
             )}
           </div>
 

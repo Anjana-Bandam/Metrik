@@ -6,7 +6,7 @@ import { api } from "../api.js";
 
 const SLIDERS = [
   { key: "spindle_speed", label: "Spindle speed", unit: "rpm", min: 800, max: 2400, step: 10, def: 1500 },
-  { key: "feed_rate", label: "Feed rate / load", unit: "Nm", min: 5, max: 80, step: 1, def: 40 },
+  { key: "spindle_torque", label: "Spindle torque / load", unit: "Nm", min: 5, max: 80, step: 1, def: 40 },
   { key: "depth_of_cut", label: "Depth of cut", unit: "mm", min: 0.2, max: 3, step: 0.1, def: 1.2 },
   { key: "tool_runtime", label: "Tool runtime so far", unit: "min", min: 0, max: 280, step: 1, def: 60 },
 ];
@@ -94,10 +94,25 @@ export default function SimulatorPanel() {
       <div className="flex flex-col gap-5">
         <div className="grid md:grid-cols-2 gap-5">
           <div className="card p-5">
-            <p className="label-cap mb-1">Projected wear risk</p>
-            <GaugeChart value={res?.risk_pct ?? 0} band={res?.status} height={240}
+            <div className="flex items-baseline justify-between gap-2 mb-1">
+              <p className="label-cap">Projected scrap risk</p>
+              <span className="text-[10px] t-faint">calibrated probability</span>
+            </div>
+            <GaugeChart
+              value={res?.risk_pct ?? 0}
+              band={res?.status}
+              watch={res?.risk_bands?.watch ?? 40}
+              alert={res?.risk_bands?.alert ?? 70}
+              height={240}
               low={res ? `${Math.round(res.life.remaining_low_min)}m` : undefined}
               high={res ? `${Math.round(res.life.remaining_high_min)}m` : undefined} />
+            {/* Say plainly why there is no wear figure here. A planner scores a
+                job that has not cut anything yet, so there is no force or
+                vibration signal for the wear model to read. */}
+            <p className="text-[10px] t-faint leading-relaxed mt-2">
+              {res?.wear_note ||
+                "Measured tool wear needs live force and vibration from a cutting tool, so it is reported on the Dashboard once the job runs — not here."}
+            </p>
           </div>
           <div className="card p-5">
             <p className="label-cap mb-1">What's driving it</p>

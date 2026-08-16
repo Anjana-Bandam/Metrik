@@ -57,10 +57,10 @@ export const api = {
 
   modelFeedback: () => request("/model_feedback"),
 
-  chat: (question, machineId) =>
+  chat: (question, machineId, history) =>
     request("/chat", {
       method: "POST",
-      body: JSON.stringify({ question, machine_id: machineId || null }),
+      body: JSON.stringify({ question, machine_id: machineId || null, history: history || null }),
     }),
 
   exportMachineUrl: (id) => `${BASE}/export/machine/${id}`,
@@ -70,13 +70,16 @@ export const api = {
   predictCsv: async (file) => {
     const fd = new FormData();
     fd.append("file", file);
-    const token = localStorage.getItem("metrik-token");
+    const token = localStorage.getItem(TOKEN_KEY);
     const res = await fetch("/api/predict_csv", {
       method: "POST",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
       body: fd,
     });
-    if (!res.ok) throw new Error("CSV prediction failed");
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.detail || `CSV prediction failed (${res.status})`);
+    }
     return res.json();
   },
 

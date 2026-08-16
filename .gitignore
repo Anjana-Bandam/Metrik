@@ -3,6 +3,9 @@ venv/
 __pycache__/
 *.pyc
 
+# Local SQLite persistence (backend/utils/db.py) - runtime data, not source
+backend/metrik.db
+
 # Node
 node_modules/
 dist/

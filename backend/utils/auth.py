@@ -4,15 +4,22 @@ auth.py
 Lightweight mock authentication for the hackathon demo.
 
 Not production auth - passwords are salted+hashed with hashlib and tokens
-are opaque random strings held in memory. It is enough to demonstrate
-multi-tenant plant accounts and role-based views without pulling in a
-database. Swap for real JWT + a user table when you productionise.
+are opaque random strings. It is enough to demonstrate multi-tenant plant
+accounts and role-based views without pulling in a real user-management
+system. Swap for real JWT + a proper identity provider when you
+productionise.
+
+USERS and SESSIONS below are still the live, hot-path cache every request
+reads - but every write is now mirrored to db.py (SQLite) so accounts and
+sessions survive a server restart instead of vanishing with the process.
 """
 
 import hashlib
 import secrets
 from datetime import datetime, timezone
 from typing import Optional, Dict
+
+from utils import db
 
 # username -> user record
 USERS: Dict[str, dict] = {}
@@ -45,6 +52,7 @@ def register(username: str, password: str, company: str,
         "full_name": full_name.strip() or username.title(),
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
+    db.upsert_user(USERS[username])
     return public_user(username)
 
 
@@ -56,11 +64,22 @@ def login(username: str, password: str) -> Optional[str]:
         return None
     token = secrets.token_urlsafe(24)
     SESSIONS[token] = username
+    db.upsert_session(token, username, datetime.now(timezone.utc).isoformat())
     return token
 
 
 def logout(token: str):
     SESSIONS.pop(token, None)
+    db.delete_session(token)
+
+
+def load_from_db():
+    """Rehydrate the in-memory user/session cache from disk. Called once
+    at API startup, before the first request is served."""
+    for row in db.fetch_all_users():
+        USERS[row["username"]] = row
+    for token, username in db.fetch_all_sessions():
+        SESSIONS[token] = username
 
 
 def user_for_token(token: str) -> Optional[dict]:

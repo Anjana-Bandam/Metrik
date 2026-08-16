@@ -1,0 +1,32 @@
+{
+  "features": [
+    "Air temperature [K]",
+    "Process temperature [K]",
+    "Spindle Speed [rpm]",
+    "Spindle Torque [Nm]",
+    "Cumulative Tool Runtime [min]",
+    "Material Hardness Index",
+    "Type_encoded",
+    "Wear x Load",
+    "Temp Diff [K]",
+    "Est Power [W]"
+  ],
+  "label": "Failure Type in ['Tool Wear Failure', 'Overstrain Failure']",
+  "positive_rate": 0.0123,
+  "validation": "5x10 repeated stratified CV, 100k pooled out-of-fold predictions",
+  "roc_auc": 0.9833133147469978,
+  "pr_auc": 0.7020915918413595,
+  "pr_auc_random_baseline": 0.0123,
+  "precision_at_operating_point": 0.6933701657458563,
+  "recall_at_operating_point": 0.6121951219512195,
+  "brier_raw": 0.008395938417917576,
+  "brier_calibrated": 0.005732622894437827,
+  "calibration": "Platt scaling on pooled out-of-fold log-odds",
+  "watch_threshold": 0.15644189480711124,
+  "alert_threshold": 0.27694550471868634,
+  "raw_thresholds_before_calibration": [
+    0.4,
+    0.7
+  ],
+  "source": "AI4I 2020 / Kaggle Machine Predictive Maintenance (SYNTHETIC benchmark)"
+}

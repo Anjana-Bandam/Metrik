@@ -3,17 +3,40 @@ import Plot from "react-plotly.js";
 import { useTheme } from "../theme.jsx";
 
 const COLOR = { green: "#D6F84C", yellow: "#FFC24B", red: "#FF6B5A", offline: "#7A7F89" };
+const FILL = {
+  green:  (d) => (d ? "rgba(214,248,76,0.10)" : "rgba(214,248,76,0.22)"),
+  yellow: (d) => (d ? "rgba(255,194,75,0.10)" : "rgba(255,194,75,0.20)"),
+  red:    (d) => (d ? "rgba(255,107,90,0.12)" : "rgba(255,107,90,0.18)"),
+};
 
-function bandFor(pct) {
-  if (pct < 40) return "green";
-  if (pct < 70) return "yellow";
-  return "red";
-}
-
-export default function GaugeChart({ value = 0, height = 240, band, low, high }) {
+/**
+ * One gauge, two jobs.
+ *
+ * Metrik shows two very different quantities side by side — calibrated scrap
+ * probability in %, and measured flank wear in mm — and they must read as the
+ * same instrument so an operator can compare them at a glance. Everything that
+ * differs between them (scale, unit, decimals, where the amber and red bands
+ * start) is therefore a prop, and the thresholds come from the API rather than
+ * being hardcoded here: they are model outputs and they move when the model is
+ * retrained.
+ */
+export default function GaugeChart({
+  value = 0,
+  max = 100,
+  suffix = "%",
+  decimals = 0,
+  watch = 40,
+  alert = 70,
+  band,
+  height = 240,
+  low,
+  high,
+}) {
   const { resolvedTheme } = useTheme();
   const dark = resolvedTheme === "dark";
-  const color = COLOR[band || bandFor(value)];
+
+  const resolvedBand = band || (value < watch ? "green" : value < alert ? "yellow" : "red");
+  const color = COLOR[resolvedBand] || COLOR.green;
   const text = dark ? "#FFFFFF" : "#141519";
   const tick = dark ? "rgba(242,241,232,0.45)" : "rgba(20,21,25,0.45)";
 
@@ -25,19 +48,25 @@ export default function GaugeChart({ value = 0, height = 240, band, low, high })
           mode: "gauge+number",
           value,
           number: {
-            suffix: "%",
-            font: { family: "JetBrains Mono, monospace", size: 38, color: text },
+            suffix,
+            valueformat: `.${decimals}f`,
+            font: { family: "JetBrains Mono, monospace", size: 34, color: text },
           },
           gauge: {
-            axis: { range: [0, 100], tickwidth: 1, tickcolor: tick,
-                    tickfont: { color: tick, size: 10 } },
+            axis: {
+              range: [0, max],
+              tickwidth: 1,
+              tickcolor: tick,
+              tickfont: { color: tick, size: 10 },
+              nticks: 5,
+            },
             bar: { color, thickness: 0.3 },
             bgcolor: "transparent",
             borderwidth: 0,
             steps: [
-              { range: [0, 40],  color: dark ? "rgba(214,248,76,0.10)" : "rgba(214,248,76,0.22)" },
-              { range: [40, 70], color: dark ? "rgba(255,194,75,0.10)" : "rgba(255,194,75,0.20)" },
-              { range: [70, 100],color: dark ? "rgba(255,107,90,0.12)" : "rgba(255,107,90,0.18)" },
+              { range: [0, watch],      color: FILL.green(dark) },
+              { range: [watch, alert],  color: FILL.yellow(dark) },
+              { range: [alert, max],    color: FILL.red(dark) },
             ],
             threshold: { line: { color, width: 4 }, thickness: 0.9, value },
           },

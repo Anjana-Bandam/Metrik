@@ -32,7 +32,7 @@ export default function CsvUpload() {
         <p className="font-display font-bold t-primary">Test with your own CSV</p>
       </div>
       <p className="text-sm t-muted mb-4">
-        Upload a CSV with your own values — spindle_speed, feed_rate, tool_runtime,
+        Upload a CSV with your own values — spindle_speed, spindle_torque, tool_runtime,
         depth_of_cut, material_type, tool_material — and see the model respond to
         numbers nobody pre-loaded.
       </p>

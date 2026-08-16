@@ -43,7 +43,7 @@ def taylor_tool_life(spindle_rpm: float,
                      material_type: str = "M",
                      tool_material: str = "carbide",
                      depth_of_cut: float = 1.0,
-                     feed_rate: float = 40.0,
+                     spindle_torque: float = 40.0,
                      diameter_mm: float = DEFAULT_TOOL_DIAMETER_MM) -> float:
     """
     Expected total tool life in minutes at these cutting conditions.
@@ -67,7 +67,7 @@ def taylor_tool_life(spindle_rpm: float,
     life *= (1.0 / max(depth_of_cut, 0.2)) ** 0.25
 
     # Higher mechanical load (torque proxy) -> shorter life
-    life *= (40.0 / max(feed_rate, 5.0)) ** 0.30
+    life *= (40.0 / max(spindle_torque, 5.0)) ** 0.30
 
     # Clamp to a sane shop-floor window
     return float(min(max(life, 15.0), 600.0))
@@ -79,7 +79,7 @@ def remaining_life_minutes(elapsed_runtime: float,
                            material_type: str = "M",
                            tool_material: str = "carbide",
                            depth_of_cut: float = 1.0,
-                           feed_rate: float = 40.0) -> dict:
+                           spindle_torque: float = 40.0) -> dict:
     """
     Blend the physics baseline with the ML wear probability.
 
@@ -91,7 +91,7 @@ def remaining_life_minutes(elapsed_runtime: float,
     statement requires us to show uncertainty rather than a single number.
     """
     expected_life = taylor_tool_life(
-        spindle_rpm, material_type, tool_material, depth_of_cut, feed_rate
+        spindle_rpm, material_type, tool_material, depth_of_cut, spindle_torque
     )
 
     physics_remaining = max(expected_life - elapsed_runtime, 0.0)

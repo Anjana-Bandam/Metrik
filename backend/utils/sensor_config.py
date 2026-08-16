@@ -19,6 +19,7 @@ SENSOR_CONFIG describes, for every feature the model needs:
 """
 
 import json
+import math
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -34,10 +35,13 @@ except FileNotFoundError:
         "Air temperature [K]": 300.1,
         "Process temperature [K]": 310.1,
         "Spindle Speed [rpm]": 1503.0,
-        "Feed Rate [Nm]": 40.1,
+        "Spindle Torque [Nm]": 40.1,
         "Cumulative Tool Runtime [min]": 108.0,
         "Material Hardness Index": 2.0,
         "Type_encoded": 1.0,
+        "Wear x Load": 4331.0,
+        "Temp Diff [K]": 10.0,
+        "Est Power [W]": 6300.0,
     }
 
 SENSOR_CONFIG = {
@@ -62,8 +66,8 @@ SENSOR_CONFIG = {
         "note": "Core wear driver - required, but degrades to median rather "
                 "than crashing if a sensor drops out mid-cycle.",
     },
-    "Feed Rate [Nm]": {
-        "json_key": "feed_rate",
+    "Spindle Torque [Nm]": {
+        "json_key": "spindle_torque",
         "required": False,
         "fallback": "derive",
         "note": "If a Feed Rate / torque sensor is missing, estimate load "
@@ -79,9 +83,9 @@ SENSOR_CONFIG = {
 }
 
 
-def _derive_feed_rate(payload: dict) -> float:
+def _derive_spindle_torque(payload: dict) -> float:
     """
-    Fallback estimate for Feed Rate [Nm] when no torque/feed sensor exists.
+    Fallback estimate for Spindle Torque [Nm] when no torque/feed sensor exists.
     Approximates mechanical load using Spindle Speed and Cumulative Tool
     Runtime: as tools wear, more torque is typically needed to hold the
     same cut, and higher spindle speeds on a dull tool draw more load.
@@ -90,7 +94,7 @@ def _derive_feed_rate(payload: dict) -> float:
     """
     spindle = payload.get("spindle_speed", TRAINING_MEDIANS["Spindle Speed [rpm]"])
     runtime = payload.get("tool_runtime", TRAINING_MEDIANS["Cumulative Tool Runtime [min]"])
-    base = TRAINING_MEDIANS["Feed Rate [Nm]"]
+    base = TRAINING_MEDIANS["Spindle Torque [Nm]"]
     wear_adjustment = (runtime / 200.0) * 4.0       # more runtime -> more load
     speed_adjustment = (spindle - 1500) / 500.0 * 2.0  # higher rpm -> more load
     return round(max(base + wear_adjustment + speed_adjustment, 1.0), 2)
@@ -120,8 +124,8 @@ def resolve_features(payload: dict) -> dict:
 
         # Missing -> apply the configured fallback strategy
         estimated_fields.append(column)
-        if config["fallback"] == "derive" and column == "Feed Rate [Nm]":
-            features[column] = _derive_feed_rate(payload)
+        if config["fallback"] == "derive" and column == "Spindle Torque [Nm]":
+            features[column] = _derive_spindle_torque(payload)
         else:
             features[column] = TRAINING_MEDIANS.get(column, 0.0)
 
@@ -140,5 +144,12 @@ def resolve_features(payload: dict) -> dict:
     # default used only if the encoder object is ever unavailable.
     type_order = {"H": 0, "L": 1, "M": 2}
     features["Type_encoded"] = type_order[material_type]
+
+    # Derived (physics) features - pure arithmetic on the fields already
+    # resolved above, computed identically to models/train_model.py so the
+    # live feature vector always matches what the model was trained on.
+    features["Wear x Load"] = features["Cumulative Tool Runtime [min]"] * features["Spindle Torque [Nm]"]
+    features["Temp Diff [K]"] = features["Process temperature [K]"] - features["Air temperature [K]"]
+    features["Est Power [W]"] = features["Spindle Torque [Nm]"] * features["Spindle Speed [rpm]"] * (2 * math.pi / 60)
 
     return {"features": features, "estimated_fields": estimated_fields}

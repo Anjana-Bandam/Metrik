@@ -185,20 +185,56 @@ export function downloadMachinePdf(machine, plant) {
   sectionTitle("Assessment");
   panel(machine.narrative);
 
+  // --- measured tool wear -------------------------------------------------
+  // Reported before scrap risk and kept separate from it: this is a physical
+  // measurement in millimetres from a model trained on real worn cutters,
+  // whereas scrap risk below is a probability from a synthetic benchmark. A
+  // reader of this report must never confuse the two.
+  const wear = machine.wear;
+  if (!offline) {
+    sectionTitle("Measured tool wear (flank wear, VB)");
+    if (wear && wear.available) {
+      table(null, [
+        ["Estimated flank wear", `${wear.wear_mm.toFixed(3)} mm`],
+        ["Share of ISO 8688 life criterion", `${wear.wear_pct_of_limit.toFixed(0)}%`],
+        ["Change-out alert point", `${wear.alert_mm} mm`],
+        [{ text: "Status", bold: true },
+         { text: wear.status === "red" ? "CHANGE THE TOOL"
+               : wear.status === "yellow" ? "Plan a change" : "Within limits", bold: true }],
+      ], [140, 38]);
+      setFont(7.5, "normal", MUTED);
+      const wnote = doc.splitTextToSize(
+        "Estimated from cutting force, vibration and acoustic emission by a model " +
+        "trained on physically measured wear from the PHM 2010 milling experiments " +
+        "(leave-one-tool-out MAE 16 um, R2 0.72). The change-out alert sits below the " +
+        `${wear.true_change_point_mm ?? 0.225} mm practical limit because the model ` +
+        "under-reads on a heavily worn edge; it is set to catch 100% of worn tools.", CW);
+      doc.text(wnote, M, y);
+      y += wnote.length * 3.4 + 2;
+    } else {
+      setFont(7.5, "normal", MUTED);
+      const wnote = doc.splitTextToSize(
+        wear?.reason || "No wear reading available for this machine.", CW);
+      doc.text(wnote, M, y);
+      y += wnote.length * 3.4 + 2;
+    }
+  }
+
   // --- risk decomposition -------------------------------------------------
   if (machine.ml_risk_pct !== undefined && !offline) {
-    sectionTitle("How this score was reached");
+    sectionTitle("How the scrap-risk score was reached");
     table(null, [
       ["Signature risk (XGBoost on live parameters)", `${machine.ml_risk_pct.toFixed(1)}%`],
       ["Life-used risk (Taylor consumed tool life)", `${machine.physics_risk_pct.toFixed(1)}%`],
-      [{ text: "Combined wear probability", bold: true },
+      [{ text: "Combined scrap risk", bold: true },
        { text: `${machine.risk_pct.toFixed(1)}%`, bold: true }],
     ], [140, 38]);
     setFont(7.5, "normal", MUTED);
     const note = doc.splitTextToSize(
       "Combined with a noisy-OR: the tool is at risk if the live signature looks " +
       "abnormal or it has exhausted its expected life. A worn tool often still cuts " +
-      "with a normal signature right up until it fails.", CW);
+      "with a normal signature right up until it fails. This is a calibrated " +
+      "probability of a wear-driven scrap event, not a measurement of wear itself.", CW);
     doc.text(note, M, y);
     y += note.length * 3.4 + 2;
   }
@@ -222,7 +258,7 @@ export function downloadMachinePdf(machine, plant) {
   sectionTitle("Sensor readout at time of report");
   table(null, [
     ["Spindle speed", `${machine.sensors.spindle_speed.toFixed(0)} rpm`],
-    ["Feed rate / load", `${machine.sensors.feed_rate.toFixed(1)} Nm`],
+    ["Spindle torque / load", `${machine.sensors.spindle_torque.toFixed(1)} Nm`],
     ["Depth of cut", `${machine.sensors.depth_of_cut} mm`],
     ["Cumulative tool runtime", `${machine.sensors.tool_runtime.toFixed(0)} min`],
     ["Surface cutting speed", `${machine.life.cutting_speed_m_min} m/min`],

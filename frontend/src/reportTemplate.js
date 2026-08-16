@@ -31,7 +31,7 @@ export function buildMachineReport(machine, plant) {
 
   const sensorRows = [
     ["Spindle speed", machine.sensors.spindle_speed.toFixed(0), "rpm"],
-    ["Feed rate / load", machine.sensors.feed_rate.toFixed(1), "Nm"],
+    ["Spindle torque / load", machine.sensors.spindle_torque.toFixed(1), "Nm"],
     ["Depth of cut", machine.sensors.depth_of_cut, "mm"],
     ["Cumulative tool runtime", machine.sensors.tool_runtime.toFixed(0), "min"],
     ["Surface cutting speed", machine.life.cutting_speed_m_min, "m/min"],
@@ -75,18 +75,49 @@ export function buildMachineReport(machine, plant) {
       machine.override.override_pct + '%.</span>'
     : "";
 
+  // Measured wear is reported separately from scrap risk, and first: it is a
+  // physical measurement in mm from a model trained on real worn cutters,
+  // while scrap risk is a probability from a synthetic benchmark.
+  const w = machine.wear;
+  const wearBlock = offline ? ""
+    : '<h2>Measured tool wear (flank wear, VB)</h2>' + (
+      w && w.available
+        ? '<table><tbody>' +
+          '<tr><td>Estimated flank wear</td><td class="num">' +
+            w.wear_mm.toFixed(3) + ' mm</td></tr>' +
+          '<tr><td>Share of ISO 8688 life criterion</td><td class="num">' +
+            w.wear_pct_of_limit.toFixed(0) + '%</td></tr>' +
+          '<tr><td>Change-out alert point</td><td class="num">' +
+            w.alert_mm + ' mm</td></tr>' +
+          '<tr><td><b>Status</b></td><td class="num"><b>' +
+            (w.status === "red" ? "CHANGE THE TOOL"
+             : w.status === "yellow" ? "Plan a change" : "Within limits") +
+            '</b></td></tr>' +
+          '</tbody></table>' +
+          '<p class="muted" style="font-size:11.5px">Estimated from cutting force, ' +
+          'vibration and acoustic emission by a model trained on physically measured ' +
+          'wear from the PHM 2010 milling experiments (leave-one-tool-out MAE 16 &micro;m, ' +
+          'R&sup2; 0.72). The alert sits below the ' + (w.true_change_point_mm || 0.225) +
+          ' mm practical limit because the model under-reads on a heavily worn edge; ' +
+          'it is set to catch 100% of worn tools.</p>'
+        : '<p class="muted" style="font-size:11.5px">' +
+          ((w && w.reason) || "No wear reading available for this machine.") + '</p>'
+    );
+
   const riskSplit = (machine.ml_risk_pct !== undefined && !offline)
-    ? '<h2>How this score was reached</h2><table><tbody>' +
+    ? '<h2>How the scrap-risk score was reached</h2><table><tbody>' +
       '<tr><td>Signature risk (XGBoost on live parameters)</td>' +
       '<td class="num">' + machine.ml_risk_pct.toFixed(1) + '%</td></tr>' +
       '<tr><td>Life-used risk (Taylor consumed tool life)</td>' +
       '<td class="num">' + machine.physics_risk_pct.toFixed(1) + '%</td></tr>' +
-      '<tr><td><b>Combined wear probability</b></td>' +
+      '<tr><td><b>Combined scrap risk</b></td>' +
       '<td class="num"><b>' + machine.risk_pct.toFixed(1) + '%</b></td></tr>' +
       '</tbody></table>' +
       '<p class="muted" style="font-size:11.5px">Combined with a noisy-OR: the ' +
       'tool is at risk if the live signature looks abnormal or it has exhausted ' +
-      'its expected life. A worn tool often still cuts with a normal signature.</p>'
+      'its expected life. A worn tool often still cuts with a normal signature. ' +
+      'This is a calibrated probability of a wear-driven scrap event, not a ' +
+      'measurement of wear itself.</p>'
     : "";
 
   return '<!doctype html><html><head><meta charset="utf-8">' +
@@ -170,6 +201,7 @@ esc(machine.state_label) + '</b></div>' +
 '<h2>Assessment</h2>' +
 '<div class="note">' + esc(machine.narrative) + '</div>' +
 
+wearBlock +
 riskSplit +
 
 '<h2>What is driving this prediction</h2>' +

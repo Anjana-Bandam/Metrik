@@ -1,9 +1,12 @@
 {
   "Air temperature [K]": 300.1,
   "Process temperature [K]": 310.1,
-  "Spindle Speed [rpm]": 1503.0,
-  "Feed Rate [Nm]": 40.1,
-  "Cumulative Tool Runtime [min]": 108.0,
+  "Spindle Speed [rpm]": 1504.0,
+  "Spindle Torque [Nm]": 40.0,
+  "Cumulative Tool Runtime [min]": 107.0,
   "Material Hardness Index": 1.0,
-  "Type_encoded": 1.0
+  "Type_encoded": 1.0,
+  "Wear x Load": 3995.45,
+  "Temp Diff [K]": 9.800000000000011,
+  "Est Power [W]": 6258.356253240714
 }

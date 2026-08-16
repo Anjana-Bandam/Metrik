@@ -32,11 +32,12 @@ export default function ChatPanel({ machineId, seedNarrative, compact }) {
   const ask = async (question) => {
     const q = question.trim();
     if (!q || busy) return;
+    const history = messages.map((m) => ({ role: m.role, text: m.text }));
     setMessages((m) => [...m, { role: "user", text: q }]);
     setInput("");
     setBusy(true);
     try {
-      const { answer } = await api.chat(q, machineId);
+      const { answer } = await api.chat(q, machineId, history);
       setMessages((m) => [...m, { role: "assistant", text: answer }]);
     } catch (err) {
       setMessages((m) => [...m, {

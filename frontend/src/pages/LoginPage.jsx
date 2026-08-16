@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ArrowRight, Loader2, Activity, Wrench, PowerOff } from "lucide-react";
 import { useAuth } from "../auth.jsx";
 
@@ -36,9 +37,10 @@ function PreviewCard({ name, pct, tone, state, bay }) {
 
 export default function LoginPage() {
   const { signIn, signUp } = useAuth();
+  const navigate = useNavigate();
   const [mode, setMode] = useState("signin");
   const [form, setForm] = useState({
-    username: "", password: "", company: "", full_name: "", role: "manager",
+    username: "", password: "", company: "", full_name: "",
   });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -51,14 +53,17 @@ export default function LoginPage() {
     try {
       if (mode === "signin") await signIn(form.username, form.password);
       else await signUp(form);
+      navigate("/", { replace: true });
     } catch (err) { setError(err.message); }
     finally { setBusy(false); }
   };
 
   const useDemo = async () => {
     setError(""); setBusy(true);
-    try { await signIn("demo", "metrik123"); }
-    catch (err) { setError(err.message); }
+    try {
+      await signIn("demo", "metrik123");
+      navigate("/", { replace: true });
+    } catch (err) { setError(err.message); }
     finally { setBusy(false); }
   };
 
@@ -181,19 +186,6 @@ export default function LoginPage() {
                 <label className={labelCls}>Your name</label>
                 <input className={`${inputCls} mt-1.5 mb-4`} placeholder="Anjana"
                        value={form.full_name} onChange={set("full_name")} />
-
-                <label className={labelCls}>Role</label>
-                <div className="flex gap-2 mt-1.5 mb-4">
-                  {[["manager", "Plant manager"], ["operator", "Operator"]].map(([v, l]) => (
-                    <button type="button" key={v}
-                      onClick={() => setForm((f) => ({ ...f, role: v }))}
-                      className={`flex-1 py-2.5 rounded-2xl text-xs font-semibold border transition-colors ${
-                        form.role === v
-                          ? "bg-[#D6F84C] border-[#D6F84C] text-[#16181d]"
-                          : "bg-white border-[#e4e2d6] text-[#6b7280] hover:border-[#C2E834]"
-                      }`}>{l}</button>
-                  ))}
-                </div>
               </>
             )}
 

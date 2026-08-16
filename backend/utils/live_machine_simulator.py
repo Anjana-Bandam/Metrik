@@ -26,7 +26,7 @@ class MachineSimState:
     name: str
     material_type: str = "M"          # L / M / H
     spindle_speed: float = 1500.0
-    feed_rate: float = 40.0
+    spindle_torque: float = 40.0
     tool_runtime: float = 0.0         # minutes, climbs over time
     depth_of_cut: float = 1.2         # mm
     air_temperature: float = 300.1
@@ -35,7 +35,7 @@ class MachineSimState:
     def step(self):
         """Advance this machine by one ~2-second tick with realistic jitter."""
         self.spindle_speed = max(800, self.spindle_speed + random.uniform(-15, 15))
-        self.feed_rate = max(5, self.feed_rate + random.uniform(-1.2, 1.6))
+        self.spindle_torque = max(5, self.spindle_torque + random.uniform(-1.2, 1.6))
         self.depth_of_cut = max(0.2, self.depth_of_cut + random.uniform(-0.05, 0.05))
         self.air_temperature += random.uniform(-0.05, 0.08)
         self.process_temperature += random.uniform(-0.05, 0.12)
@@ -48,7 +48,7 @@ class MachineSimState:
             "name": self.name,
             "material_type": self.material_type,
             "spindle_speed": round(self.spindle_speed, 1),
-            "feed_rate": round(self.feed_rate, 2),
+            "spindle_torque": round(self.spindle_torque, 2),
             "tool_runtime": round(self.tool_runtime, 2),
             "depth_of_cut": round(self.depth_of_cut, 3),
             "air_temperature": round(self.air_temperature, 2),

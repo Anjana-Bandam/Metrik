@@ -19,6 +19,15 @@ export default function MachineCard({ machine, onOpen }) {
     machine.status === "red" ? "#FF6B5A" :
     machine.status === "yellow" ? "#FFC24B" : "#D6F84C";
 
+  // Measured flank wear is scored on its own ISO-anchored bands, not on the
+  // scrap-risk bands - the two models answer different questions and a machine
+  // can legitimately be amber on one and green on the other.
+  const wear = machine.wear;
+  const wearColor =
+    !wear?.available ? "#9AA3AE" :
+    wear.status === "red" ? "#FF6B5A" :
+    wear.status === "yellow" ? "#FFC24B" : "#D6F84C";
+
   return (
     <button onClick={() => onOpen(machine)}
       className={`card p-5 text-left flex flex-col gap-4 transition-all duration-200
@@ -60,11 +69,35 @@ export default function MachineCard({ machine, onOpen }) {
                 </span>
                 <span className="text-sm t-faint mb-1">%</span>
               </div>
-              <p className="text-xs t-muted mt-1">wear probability</p>
+              <p className="text-xs t-muted mt-1">scrap risk</p>
             </div>
             <div className="w-24 shrink-0">
               <Sparkline data={machine.risk_history} color={sparkColor} height={34} />
             </div>
+          </div>
+
+          {/* Measured flank wear - the physical quantity, from the PHM 2010
+              model. Shown against the ISO 8688 0.3 mm life criterion so the
+              number means something to a machinist, not just to the app. */}
+          <div>
+            <div className="flex justify-between text-[11px] t-muted mb-1.5">
+              <span>Tool wear</span>
+              <span className="telemetry">
+                {wear?.available
+                  ? `${wear.wear_mm.toFixed(3)} / ${wear.limit_mm.toFixed(2)} mm`
+                  : "—"}
+              </span>
+            </div>
+            <div className="h-1.5 rounded-pill bg-cream-200 dark:bg-ink-600 overflow-hidden">
+              <div className="h-full rounded-pill transition-all duration-500"
+                style={{
+                  width: wear?.available ? `${Math.min(wear.wear_pct_of_limit, 100)}%` : "0%",
+                  backgroundColor: wearColor,
+                }} />
+            </div>
+            {!wear?.available && wear?.reason && (
+              <p className="text-[10px] t-faint mt-1">{wear.reason}</p>
+            )}
           </div>
 
           {/* Tool life consumed */}
@@ -89,7 +122,11 @@ export default function MachineCard({ machine, onOpen }) {
         {[
           ["Depth", `${machine.sensors.depth_of_cut}`, "mm"],
           ["Spindle", live ? `${machine.sensors.spindle_speed.toFixed(0)}` : "—", "rpm"],
-          ["Left", offline ? "—" : machine.est_time_to_failure, ""],
+          ["Change in",
+           offline ? "—"
+             : wear?.rul_min != null ? `${Math.round(wear.rul_min)}`
+             : machine.est_time_to_failure,
+           wear?.rul_min != null ? "min" : ""],
         ].map(([k, v, u]) => (
           <div key={k}>
             <p className="t-faint text-[10px] uppercase tracking-wide">{k}</p>
