@@ -76,7 +76,7 @@ export const api = {
     const fd = new FormData();
     fd.append("file", file);
     const token = localStorage.getItem(TOKEN_KEY);
-    const res = await fetch("/api/predict_csv", {
+    const res = await fetch(`${BASE}/predict_csv`, {
       method: "POST",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
       body: fd,
