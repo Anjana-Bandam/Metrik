@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Metrik — Innovation Summary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14161a;
+    --ink-2:#4a4e58;
+    --paper:#ffffff;
+    --paper-2:#f7f6f1;
+    --line:#e3e1d4;
+    --line-2:#dcdacb;
+    --accent:#cfe83a;
+    --accent-deep:#8f9e1e;
+    --muted:#6b6f78;
+    --danger:#b0402f;
+    --good:#3c7a52;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#d9d7c9;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .page{
+    width:210mm;height:297mm;
+    background:var(--paper);
+    position:relative;
+    overflow:hidden;
+    padding:17mm 18mm 15mm 18mm;
+    page-break-after:always;
+    margin:0 auto;
+  }
+  .page:last-of-type{page-break-after:auto;}
+  h1,h2,h3{font-family:'Poppins',sans-serif;margin:0;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  p{margin:0;line-height:1.55;color:var(--ink-2);}
+
+  /* ---------- shared chrome ---------- */
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:8.6pt; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted);
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{content:"";width:16px;height:2px;background:var(--accent);display:inline-block;}
+  .pagehead{margin-bottom:9mm;}
+  .pagehead h2{font-size:24pt;font-weight:700;margin-top:3.5mm;color:var(--ink);}
+  .pagefoot{
+    position:absolute; left:18mm; right:18mm; bottom:9mm;
+    display:flex; justify-content:space-between; align-items:center;
+    border-top:0.75pt solid var(--line); padding-top:3mm;
+    font-family:'JetBrains Mono',monospace; font-size:7.6pt; color:var(--muted); letter-spacing:.04em;
+  }
+  .pagefoot .dot{color:var(--accent-deep);}
+
+  .badge{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:'JetBrains Mono',monospace; font-size:7.3pt; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+    padding:2.5px 7px; border-radius:3px; border:0.75pt solid var(--line-2);
+    color:var(--ink-2); background:var(--paper-2);
+  }
+  .badge.implemented{border-color:var(--good); color:var(--good); background:#f1f7f2;}
+  .badge.simulated{border-color:#b0894f; color:#8a6a3a; background:#faf5ec; border-style:dashed;}
+  .badge.future{color:var(--muted); background:#f1f0e9;}
+
+  .card{border:0.75pt solid var(--line); border-radius:2px; background:var(--paper);}
+  .accent-rule{height:3px;width:34px;background:var(--accent);border-radius:2px;}
+
+  /* logo mark */
+  .mark{width:26px;height:26px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;}
+  .mark svg{display:block;}
+  .wordmark{display:flex;align-items:center;gap:9px;}
+  .wordmark span{font-family:'Poppins',sans-serif;font-weight:700;font-size:12.5pt;letter-spacing:-0.02em;}
+
+  /* ===================== PAGE 1 — COVER ===================== */
+  #p1{background:var(--ink);color:#fff;padding:0;}
+  #p1 .frame{position:absolute;inset:0;padding:16mm 18mm;display:flex;flex-direction:column;justify-content:space-between;}
+  #p1 .sources{display:flex;gap:9mm;flex-wrap:wrap;padding-top:6mm;border-top:0.75pt solid #2b2e37;max-width:150mm;}
+  #p1 .sources .s{font-family:'JetBrains Mono',monospace;font-size:7.8pt;color:#9a9da6;letter-spacing:.02em;}
+  #p1 .sources .s strong{color:#c6c8ce;font-weight:600;}
+  #p1 .topbar{display:flex;justify-content:space-between;align-items:center;}
+  #p1 .wordmark span{color:#fff;}
+  #p1 .doctag{font-family:'JetBrains Mono',monospace;font-size:8pt;letter-spacing:.16em;text-transform:uppercase;color:#9a9da6;border:0.75pt solid #33363f;padding:5px 10px;border-radius:3px;}
+  #p1 .hero{margin-top:20mm;}
+  #p1 .hero h1{font-size:33pt;line-height:1.08;font-weight:700;color:#fff;max-width:135mm;}
+  #p1 .hero h1 em{font-style:normal;color:var(--accent);}
+  #p1 .hero .sub{margin-top:7mm;max-width:118mm;font-size:11pt;color:#c6c8ce;line-height:1.6;}
+  #p1 .lower{display:flex;gap:14mm;align-items:flex-end;}
+  #p1 .lower .left{flex:1;}
+  #p1 .statement{border-left:2.5px solid var(--accent);padding-left:7mm;max-width:96mm;}
+  #p1 .statement .k{font-family:'JetBrains Mono',monospace;font-size:8pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:2.5mm;display:block;}
+  #p1 .statement p{color:#e3e4e8;font-size:9.6pt;line-height:1.65;}
+  #p1 .gauge-wrap{width:74mm;flex:none;display:flex;flex-direction:column;align-items:center;}
+  #p1 .stats{display:flex;gap:6mm;margin-top:10mm;padding-top:6mm;border-top:0.75pt solid #2b2e37;}
+  #p1 .stat .n{font-family:'JetBrains Mono',monospace;font-size:15pt;font-weight:700;color:#fff;}
+  #p1 .stat .l{font-size:7.6pt;color:#9a9da6;margin-top:1.5mm;letter-spacing:.03em;}
+
+  /* ===================== generic two-col ===================== */
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:14mm;}
+  .block + .block{margin-top:9mm;}
+  .block h3{font-size:12.5pt;font-weight:700;margin-bottom:2.8mm;}
+  .block .tag{font-family:'JetBrains Mono',monospace;font-size:8pt;color:var(--accent-deep);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2mm;display:block;}
+  .block p{font-size:10.3pt;}
+
+  table{border-collapse:collapse;width:100%;}
+  th,td{text-align:left;padding:6px 8px;font-size:9.6pt;}
+  thead th{font-family:'JetBrains Mono',monospace;font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--ink);padding-bottom:6px;}
+  tbody tr{border-bottom:0.75pt solid var(--line);}
+  tbody tr:last-child{border-bottom:none;}
+  td.num{font-family:'JetBrains Mono',monospace;font-weight:600;}
+
+  .flowgap{display:none;}
+
+  /* comparison rows page 2 */
+  .comp-row{display:grid;grid-template-columns:34mm 1fr 1fr;gap:6mm;align-items:stretch;padding:7.5mm 0;border-bottom:0.75pt solid var(--line);}
+  .comp-row:first-child{border-top:0.75pt solid var(--ink);}
+  .comp-row .who{font-family:'Poppins',sans-serif;font-weight:700;font-size:10.6pt;padding-top:1mm;}
+  .comp-row .box{font-size:9.6pt;color:var(--ink-2);line-height:1.55;}
+  .comp-row.winner .who{color:var(--accent-deep);}
+  .comp-row .lbl{display:block;font-family:'JetBrains Mono',monospace;font-size:7.4pt;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:1.4mm;}
+
+  /* innovation cards page 3 */
+  .igrid{display:grid;grid-template-columns:1fr 1fr;gap:6mm 10mm;}
+  .icard{padding:6mm 7mm;border:0.75pt solid var(--line);border-top:2.5px solid var(--ink);}
+  .icard .num{font-family:'JetBrains Mono',monospace;font-size:9pt;color:var(--accent-deep);font-weight:700;}
+  .icard h3{font-size:12.5pt;margin-top:2mm;}
+  .icard p{font-size:9.8pt;margin-top:2.4mm;line-height:1.5;}
+
+  .pull{margin-top:6mm;padding:6mm 8mm;background:var(--paper-2);border-left:2.5px solid var(--ink);}
+  .pull p{font-family:'Poppins',sans-serif;font-style:normal;font-weight:600;font-size:11.5pt;color:var(--ink);line-height:1.5;}
+  .pull .src{margin-top:2.4mm;font-family:'JetBrains Mono',monospace;font-size:7.6pt;color:var(--muted);}
+
+  /* architecture flow page 4 */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:3mm;align-items:stretch;}
+  .fstage{border:0.75pt solid var(--line);padding:7mm 5mm;position:relative;background:var(--paper-2);}
+  .fstage .idx{font-family:'JetBrains Mono',monospace;font-size:7.6pt;color:var(--accent-deep);font-weight:700;}
+  .fstage h3{font-size:10.4pt;margin-top:2.4mm;line-height:1.25;}
+  .fstage ul{margin:3.6mm 0 0;padding-left:4mm;}
+  .fstage li{font-size:8.4pt;color:var(--ink-2);line-height:1.5;margin-bottom:2mm;}
+  .arrow{display:flex;align-items:center;justify-content:center;}
+  .arrow svg{width:5mm;height:5mm;}
+  .flowrow{display:grid;grid-template-columns:1fr 6mm 1fr 6mm 1fr 6mm 1fr 6mm 1fr;align-items:stretch;}
+
+  .notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:8mm 10mm;margin-top:10mm;}
+  .note h3{font-size:11pt;}
+  .note p{font-size:9.6pt;margin-top:2.2mm;line-height:1.55;}
+
+  /* page5 stack table */
+  .stack-grid{display:grid;grid-template-columns:1fr 1fr;gap:5mm 10mm;}
+  .stack-cell .k{font-family:'JetBrains Mono',monospace;font-size:7.8pt;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);}
+  .stack-cell .v{font-size:10.4pt;margin-top:1.6mm;color:var(--ink);font-weight:500;}
+
+  /* page 6 big numbers */
+  .bignums{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;}
+  .bn{border:0.75pt solid var(--line);border-top:2.5px solid var(--accent);padding:7.5mm 5.5mm;text-align:left;}
+  .bn .v{font-family:'JetBrains Mono',monospace;font-size:23pt;font-weight:700;color:var(--ink);line-height:1;}
+  .bn .u{font-family:'JetBrains Mono',monospace;font-size:9pt;color:var(--accent-deep);font-weight:700;}
+  .bn .l{font-size:8.6pt;color:var(--muted);margin-top:3mm;line-height:1.42;}
+
+  .gapcard{margin-top:9mm;display:grid;grid-template-columns:48mm 1fr;gap:9mm;align-items:center;padding:9mm;background:var(--ink);color:#fff;}
+  .gapcard .big{font-family:'JetBrains Mono',monospace;font-size:38pt;font-weight:700;color:var(--accent);line-height:1;}
+  .gapcard .big span{font-size:13pt;color:#c6c8ce;}
+  .gapcard p{color:#c6c8ce;font-size:9.8pt;line-height:1.6;}
+  .gapcard strong{color:#fff;}
+
+  /* page 7 feature grid */
+  .fgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5mm;}
+  .fcard{border:0.75pt solid var(--line);padding:6.5mm 5.5mm;}
+  .fcard .ic{width:20px;height:20px;margin-bottom:3mm;}
+  .fcard h3{font-size:10pt;line-height:1.3;}
+  .fcard p{font-size:8.8pt;margin-top:2.4mm;line-height:1.48;}
+
+  .impact-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9mm;margin-top:9mm;}
+  .impact-row .h4{font-family:'JetBrains Mono',monospace;font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:2.4mm;}
+  .impact-row p{font-size:9.6pt;line-height:1.55;}
+
+  /* page 8 */
+  .final-grid{display:grid;grid-template-columns:1fr 1fr;gap:10mm 12mm;}
+  .final-grid ul{margin:3mm 0 0;padding-left:4.5mm;}
+  .final-grid li{font-size:9.8pt;color:var(--ink-2);line-height:1.6;margin-bottom:2.6mm;}
+  .closeblock{margin-top:10mm;padding:11mm 13mm;background:var(--ink);color:#fff;}
+  .closeblock p{font-family:'Poppins',sans-serif;font-weight:600;font-size:14.5pt;color:#fff;line-height:1.55;}
+  .closeblock .wm{margin-top:7mm;display:flex;align-items:center;gap:8px;opacity:.85;}
+  .closeblock .wm span{font-family:'Poppins',sans-serif;font-weight:700;font-size:10.5pt;color:var(--accent);}
+
+  @media print{
+    body{background:#fff;}
+    .page{margin:0;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ PAGE 1 — COVER ============================================================ -->
+<section class="page" id="p1">
+  <div class="frame">
+    <div class="topbar">
+      <div class="wordmark">
+        <div class="mark">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+            <path d="M2 6.5 H18" stroke="#cfe83a" stroke-width="1.2" stroke-dasharray="2 2" stroke-linecap="round" opacity=".55"/>
+            <path d="M2 16.5 C6 16, 9 14, 11.5 9.5 S16 3.5, 18 3" stroke="#cfe83a" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            <circle cx="11.5" cy="9.5" r="1.9" fill="#cfe83a"/>
+          </svg>
+        </div>
+        <span>Metrik</span>
+      </div>
+      <div class="doctag">Innovation Summary</div>
+    </div>
+
+    <div class="hero">
+      <h1>Change the tool<br><em>before it scraps</em><br>the part.</h1>
+      <p class="sub">AI-powered predictive maintenance for CNC cutting tools — a physics-grounded wear model and a calibrated risk model, cross-checked against each other, explained per prediction, and validated the way an engineering paper is validated rather than a pitch deck.</p>
+    </div>
+
+    <div class="sources">
+      <span class="s"><strong>Trained on</strong> PHM 2010 Data Challenge — real, physically measured tool wear (CC BY 4.0)</span>
+      <span class="s"><strong>Cross-checked with</strong> Taylor's tool-life equation, V·T<sup>n</sup>=C (1907)</span>
+      <span class="s"><strong>Explained with</strong> SHAP, per prediction</span>
+    </div>
+
+    <div class="lower">
+      <div class="left">
+        <div class="statement">
+          <span class="k">Key Innovation</span>
+          <p>Metrik pairs a machine-learning wear estimate with Taylor's century-old tool-life equation, so every prediction is checked against physics as well as data — then explains itself with SHAP, and closes the loop with an operator-verdict scoreboard, instead of handing over one opaque number.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="n">16.0µm</div><div class="l">wear MAE<br>(leave-one-tool-out)</div></div>
+          <div class="stat"><div class="n">0.983</div><div class="l">risk model<br>ROC-AUC</div></div>
+          <div class="stat"><div class="n">2</div><div class="l">independently<br>validated models</div></div>
+          <div class="stat"><div class="n">0</div><div class="l">machine actions —<br>decision support only</div></div>
+        </div>
+      </div>
+
+      <div class="gauge-wrap">
+        <svg width="210" height="230" viewBox="0 0 210 230">
+          <!-- dial -->
+          <circle cx="105" cy="105" r="88" fill="none" stroke="#2a2d35" stroke-width="14"/>
+          <path d="M 27 148 A 88 88 0 1 1 183 148" fill="none" stroke="#3a3d45" stroke-width="14" stroke-linecap="round" opacity="0"/>
+          <path d="M 27 148 A 88 88 0 1 1 183 148" fill="none" stroke="#cfe83a" stroke-width="14" stroke-linecap="round"
+                stroke-dasharray="345" stroke-dashoffset="80"/>
+          <text x="105" y="98" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="40" fill="#ffffff">78</text>
+          <text x="105" y="122" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#9a9da6">% flank wear</text>
+          <text x="105" y="142" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#6b6f78">± 4.2% confidence band</text>
+        </svg>
+        <div style="width:100%;margin-top:2mm;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:7.2pt;letter-spacing:.1em;text-transform:uppercase;color:#9a9da6;margin-bottom:2.2mm;">Top SHAP drivers</div>
+          <div style="display:flex;flex-direction:column;gap:2.2mm;">
+            <div style="display:flex;align-items:center;gap:5px;"><div style="width:62%;height:6px;background:#cfe83a;border-radius:2px;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:6.8pt;color:#c6c8ce;">Spindle Torque</span></div>
+            <div style="display:flex;align-items:center;gap:5px;"><div style="width:41%;height:6px;background:#8f9e1e;border-radius:2px;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:6.8pt;color:#c6c8ce;">Cumulative Runtime</span></div>
+            <div style="display:flex;align-items:center;gap:5px;"><div style="width:24%;height:6px;background:#565c1a;border-radius:2px;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:6.8pt;color:#c6c8ce;">Process Temperature</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ PAGE 2 — PROBLEM ============================================================ -->
+<section class="page" id="p2">
+  <div class="pagehead">
+    <div class="eyebrow">01 · Problem &amp; Gap</div>
+    <h2>Tool wear is invisible until it isn't.</h2>
+  </div>
+
+  <div class="cols2">
+    <div>
+      <div class="block">
+        <span class="tag">The Problem</span>
+        <h3>Wear happens where no one can see it.</h3>
+        <p>Flank wear develops at the tool tip, inside the cut, under coolant — an operator cannot see it, and by the time a part shows a defect, the tool has already produced scrap. So most shops fall back on fixed-schedule tool changes: swap every N parts, or every shift, whether the tool needs it or not.</p>
+      </div>
+      <div class="block">
+        <span class="tag">Why It Matters</span>
+        <h3>A schedule is always wrong in one direction.</h3>
+        <p>Change too early and a shop discards carbide inserts with real cutting life left, inflating tooling spend across hundreds of changes a month. Change too late and a degrading tool drifts out of tolerance, scraps the workpiece, or — at spindle speed — fractures, which is a genuine hazard to the operator standing at the machine, not just a cost.</p>
+      </div>
+      <div class="block">
+        <span class="tag">The Data Already Exists</span>
+        <h3>It's discarded, not interpreted.</h3>
+        <p>Spindle speed, torque, temperature and cumulative runtime already stream off CNC machines during every cut. The gap isn't sensing — it's turning that stream into a number an operator can act on, and trust.</p>
+      </div>
+    </div>
+
+    <div>
+      <span class="tag">Existing Approaches → The Gap</span>
+      <div class="comp-row">
+        <div class="who">Fixed<br>schedule</div>
+        <div class="box"><span class="lbl">What it does</span>Replaces tools on a calendar or part-count interval, no matter their actual condition.</div>
+        <div class="box"><span class="lbl">The gap</span>Wastes usable tool life on early changes, and still misses a tool that wears out ahead of schedule.</div>
+      </div>
+      <div class="comp-row">
+        <div class="who">Vendor<br>monitoring<br>hardware</div>
+        <div class="box"><span class="lbl">What it does</span>Dedicated sensor packages raise an alert when a reading crosses a vendor-set threshold.</div>
+        <div class="box"><span class="lbl">The gap</span>Expensive and proprietary; the alert is opaque, so operators can't verify it and stop trusting it.</div>
+      </div>
+      <div class="comp-row winner">
+        <div class="who">Metrik</div>
+        <div class="box"><span class="lbl">What it does</span>Continuous wear &amp; risk estimate from standard telemetry, grounded in tool-life physics.</div>
+        <div class="box"><span class="lbl">The gap it closes</span>Every number ships with a confidence range and a ranked explanation of what's driving it.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagefoot">
+    <span>Metrik <span class="dot">·</span> Innovation Summary</span>
+    <span>02 / 08</span>
+  </div>
+</section>
+
+<!-- ============================================================ PAGE 3 — THE INNOVATION ============================================================ -->
+<section class="page" id="p3">
+  <div class="pagehead">
+    <div class="eyebrow">02 · The Innovation</div>
+    <h2>Two questions, kept deliberately separate.</h2>
+  </div>
+
+  <p style="font-size:10.6pt;max-width:168mm;line-height:1.6;">Metrik treats "will this cut scrap the part?" and "how worn is this insert right now?" as two different questions — because only one of them can be honestly answered from a synthetic benchmark, and conflating them is how monitoring tools end up quoting a number they can't actually support. Keeping them separate, and being explicit about which is which, is itself part of the innovation.</p>
+
+  <div class="igrid" style="margin-top:5mm;">
+    <div class="icard">
+      <div class="num">01</div>
+      <h3>Physics-Grounded, Not Black-Box</h3>
+      <p>Every wear estimate is checked against Taylor's tool-life equation (V·T<sup>n</sup>=C, 1907) — the standard the machining industry already trusts — instead of asking an operator to accept a machine-learning number on faith alone.</p>
+    </div>
+    <div class="icard">
+      <div class="num">02</div>
+      <h3>Validation Methodology as a Feature</h3>
+      <p>The wear model is validated leave-one-tool-out — tested on a cutter it never trained on. Measured on the same data, a naive random split reports a <strong>10.7× more optimistic</strong> error, and that gap is reported, not hidden.</p>
+    </div>
+    <div class="icard">
+      <div class="num">03</div>
+      <h3>Explainable Per Prediction</h3>
+      <p>SHAP decomposes every single prediction into a ranked list of which parameter is driving it — torque, runtime, temperature — so an operator knows what to correct, not just that something is wrong.</p>
+    </div>
+    <div class="icard">
+      <div class="num">04</div>
+      <h3>A Closed Human Feedback Loop</h3>
+      <p>Every operator verdict on a tool change is logged and scored against what the model predicted, surfaced with a Wilson-score confidence interval — and honestly caveated as a field sanity check, not a validation metric, because it's a biased sample.</p>
+    </div>
+  </div>
+
+  <div class="pull">
+    <p>"The defensible claim is not 'better than any schedule' — it's 'removes the need to guess the schedule.'"</p>
+    <div class="src">— from the project's own validation notes, on condition-based vs. fixed-interval tool changes</div>
+  </div>
+
+  <div class="pagefoot">
+    <span>Metrik <span class="dot">·</span> Innovation Summary</span>
+    <span>03 / 08</span>
+  </div>
+</section>
+
+<!-- ============================================================ PAGE 4 — ARCHITECTURE ============================================================ -->
+<section class="page" id="p4">
+  <div class="pagehead">
+    <div class="eyebrow">03 · How It Works</div>
+    <h2>From spindle telemetry to a tool-change decision.</h2>
+  </div>
+
+  <div class="flowrow" style="margin-top:4mm;">
+    <div class="fstage">
+      <div class="idx">INPUT</div>
+      <h3>Spindle Telemetry</h3>
+      <ul>
+        <li>Speed, torque, temperature, runtime</li>
+        <li>3-axis force / vibration / acoustic emission</li>
+        <li>Live sensor feed, CSV upload, or simulator</li>
+      </ul>
+    </div>
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 6l6 6-6 6" stroke="#8f9e1e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="fstage">
+      <div class="idx">PROCESSING</div>
+      <h3>Feature Engineering</h3>
+      <ul>
+        <li>Baseline-relative windowing vs. fresh-tool signature</li>
+        <li>Cumulative exposure &amp; smoothed trend</li>
+        <li>Missing-sensor fallback / derivation</li>
+      </ul>
+    </div>
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 6l6 6-6 6" stroke="#8f9e1e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="fstage">
+      <div class="idx">INTELLIGENCE</div>
+      <h3>Dual Model + Physics</h3>
+      <ul>
+        <li>XGBoost flank-wear regressor</li>
+        <li>XGBoost scrap-risk classifier (calibrated)</li>
+        <li>Taylor life baseline + SHAP explainer</li>
+      </ul>
+    </div>
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 6l6 6-6 6" stroke="#8f9e1e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="fstage">
+      <div class="idx">OUTPUT</div>
+      <h3>Decision-Ready Estimate</h3>
+      <ul>
+        <li>Wear % and risk % with confidence band</li>
+        <li>Remaining life in minutes</li>
+        <li>Ranked SHAP drivers, cost impact</li>
+      </ul>
+    </div>
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 6l6 6-6 6" stroke="#8f9e1e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="fstage" style="background:var(--ink);border-color:var(--ink);">
+      <div class="idx" style="color:var(--accent);">USER / ACTION</div>
+      <h3 style="color:#fff;">Operator Decides</h3>
+      <ul>
+        <li style="color:#c6c8ce;">Fleet dashboard, per-machine detail</li>
+        <li style="color:#c6c8ce;">Acknowledge or log a tool change</li>
+        <li style="color:#c6c8ce;">Verdict feeds the accuracy scoreboard</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="notes-grid">
+    <div class="note">
+      <h3>Never actuates the machine</h3>
+      <p>Every endpoint in the system is read-and-recommend. Metrik does not stop, throttle, or reconfigure a machine — a person always makes the final call, and that call is what closes the feedback loop.</p>
+    </div>
+    <div class="note">
+      <h3>One feature pipeline, two callers</h3>
+      <p>The exact same feature-extraction code runs at training time and at inference time, so a live machine can never drift out of sync with how the model was actually trained — a common, quiet failure mode this design rules out by construction.</p>
+    </div>
+    <div class="note">
+      <h3>Persistent, multi-tenant fleet state</h3>
+      <p>Every account's machines, tool-change history, and running scrap-saved total are mirrored to SQLite, so a server restart doesn't erase a plant's history. Two accounts never see each other's fleet.</p>
+    </div>
+    <div class="note">
+      <h3>Graceful under an incomplete sensor package</h3>
+      <p>A real shop's machines don't all report the same fields. Missing readings fall back to a training-median or are derived from related sensors — the system is designed to never crash on an incomplete payload.</p>
+    </div>
+  </div>
+
+  <div class="pagefoot">
+    <span>Metrik <span class="dot">·</span> Innovation Summary</span>
+    <span>04 / 08</span>
+  </div>
+</section>
+
+<!-- ============================================================ PAGE 5 — TECHNICAL IMPLEMENTATION ============================================================ -->
+<section class="page" id="p5">
+  <div class="pagehead">
+    <div class="eyebrow">04 · Technical Implementation</div>
+    <h2>What's actually running underneath.</h2>
+  </div>
+
+  <div class="stack-grid">
+    <div class="stack-cell"><div class="k">Backend</div><div class="v">Python · FastAPI</div></div>
+    <div class="stack-cell"><div class="k">Frontend</div><div class="v">React 18 · Vite · TailwindCSS</div></div>
+    <div class="stack-cell"><div class="k">Machine Learning</div><div class="v">XGBoost (regression + classification)</div></div>
+    <div class="stack-cell"><div class="k">Explainability</div><div class="v">SHAP TreeExplainer, per prediction</div></div>
+    <div class="stack-cell"><div class="k">Persistence</div><div class="v">SQLite — mirrors in-memory fleet state</div></div>
+    <div class="stack-cell"><div class="k">Auth</div><div class="v">Bearer-token sessions, multi-tenant accounts</div></div>
+    <div class="stack-cell"><div class="k">Conversational Assistant</div><div class="v">Groq-hosted Llama 3.3 70B, rule-based fallback</div></div>
+    <div class="stack-cell"><div class="k">Physics Model</div><div class="v">Taylor tool-life equation, V·T<sup>n</sup>=C</div></div>
+  </div>
+
+  <div style="margin-top:6mm;">
+    <span class="tag">Two Models, One Fleet</span>
+    <table>
+      <thead><tr><th></th><th>Scrap-Risk Model</th><th>Flank-Wear Model</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Question</strong></td><td>Probability this cut ends in a wear-driven scrap event</td><td>Flank wear right now, in millimetres</td></tr>
+        <tr><td><strong>Training data</strong></td><td>AI4I 2020 (synthetic benchmark)</td><td>PHM 2010 milling challenge (real, physically measured)</td></tr>
+        <tr><td><strong>Validation</strong></td><td>5×10 repeated stratified cross-validation</td><td>Leave-one-tool-out (trained on 2 cutters, tested on a 3rd)</td></tr>
+        <tr><td><strong>Headline result</strong></td><td class="num">ROC-AUC 0.983 · PR-AUC 0.702</td><td class="num">MAE 16.0 µm · R² 0.724</td></tr>
+        <tr><td><strong>Output</strong></td><td>Calibrated probability (Platt scaling)</td><td>Millimetres, against the ISO 8688 0.30mm limit</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="notes-grid" style="margin-top:5mm;">
+    <div class="note">
+      <h3>Feature engineering</h3>
+      <p>Seven condition-monitoring channels (3-axis force, 3-axis vibration, acoustic emission) are windowed every 2 seconds and expressed <em>relative to a fresh-tool baseline</em> captured in the first ~30 seconds after each tool change — because absolute force levels depend on the fixture and machine, not just the wear.</p>
+    </div>
+    <div class="note">
+      <h3>API surface</h3>
+      <p>Auth (register/login/session) · Fleet (machine list, detail, add/remove, state) · Predict (live &amp; What-If simulator, CSV batch) · Human-in-the-loop (tool-change log, acknowledge, feedback scoreboard) · Chat · Export (JSON/PDF) — every fleet route scoped to the logged-in account.</p>
+    </div>
+    <div class="note">
+      <h3>Robustness by design</h3>
+      <p>CSV uploads are capped in size and row count against resource exhaustion; every sensor field has a documented fallback; the frontend badges any value the backend had to estimate rather than presenting it as measured.</p>
+    </div>
+    <div class="note">
+      <h3>Calibration, not just accuracy</h3>
+      <p>The risk classifier's raw score is corrected with Platt scaling so a "70%" actually means observed at ~70% frequency — cutting the calibration error (Brier score) by 32%, without changing which machines alarm.</p>
+    </div>
+  </div>
+
+  <div class="pagefoot">
+    <span>Metrik <span class="dot">·</span> Innovation Summary</span>
+    <span>05 / 08</span>
+  </div>
+</section>
+
+<!-- ============================================================ PAGE 6 — RESULTS ============================================================ -->
+<section class="page" id="p6">
+  <div class="pagehead">
+    <div class="eyebrow">05 · Results &amp; Validation</div>
+    <h2>Verified against held-out data, not asserted.</h2>
+  </div>
+
+  <div class="bignums">
+    <div class="bn"><div class="v">16.0<span class="u">µm</span></div><div class="l">Flank-wear MAE, leave-one-tool-out — tested on a cutter the model never trained on.</div></div>
+    <div class="bn"><div class="v">0.724</div><div class="l">R² for the wear regressor under the same held-out-tool validation.</div></div>
+    <div class="bn"><div class="v">0.983</div><div class="l">ROC-AUC for the scrap-risk classifier (0.702 PR-AUC vs. a 0.012 random baseline).</div></div>
+    <div class="bn"><div class="v">20<span class="u">sec</span></div><div class="l">Remaining-life median error in the final quarter of tool life — when the answer matters most.</div></div>
+  </div>
+
+  <div class="gapcard">
+    <div>
+      <div class="big">10.7×<span><br>optimism gap</span></div>
+    </div>
+    <p>The single most common error in tool-wear research is validating on a random row split — consecutive readings from the same cutter are nearly identical, so a model can memorize one tool's own wear curve. Measured on Metrik's exact data, that invalid split reports <strong>1.5 µm MAE (R² 0.995)</strong> — a result <strong>10.7× more optimistic</strong> than the honest, leave-one-tool-out number of 16.0 µm. Both numbers are computed and reported every training run, on purpose.</p>
+  </div>
+
+  <div class="notes-grid" style="margin-top:9mm;">
+    <div class="note">
+      <h3>Tool life recovered vs. a fixed schedule</h3>
+      <p>Across the three validated cutters, a practical fixed schedule (built with an 80% safety margin) uses 74.1% of available tool life before changing it; Metrik's condition-based estimate uses 88.5% — <strong>+19.3%</strong> more usable life recovered, and <strong>−4.6%</strong> against an oracle schedule that would need foreknowledge no real shop has. Zero tools were changed late under either policy.</p>
+    </div>
+    <div class="note">
+      <h3>Honest limitation: cross-material transfer</h3>
+      <p>Trained on steel and tested zero-shot on titanium cutters it never saw, wear-magnitude accuracy degrades from 16.0 µm to 38 µm MAE. Per-machine baselining is what makes deployment on an unseen machine viable at all — but the gap is measured and reported, not smoothed over.</p>
+    </div>
+  </div>
+
+  <p style="margin-top:9mm;font-size:9pt;color:var(--muted);font-style:italic;">All figures above are offline validation results on published research datasets (PHM 2010 Data Challenge; AI4I 2020 / Kaggle). The demo fleet replays these real, physically measured cutting signals rather than synthesizing them. The system has not yet been field-validated at a live production shop.</p>
+
+  <div class="pagefoot">
+    <span>Metrik <span class="dot">·</span> Innovation Summary</span>
+    <span>06 / 08</span>
+  </div>
+</section>
+
+<!-- ============================================================ PAGE 7 — FEATURES + IMPACT ============================================================ -->
+<section class="page" id="p7">
+  <div class="pagehead">
+    <div class="eyebrow">06 · Features &amp; Impact</div>
+    <h2>From a model to a shop-floor decision.</h2>
+  </div>
+
+  <div class="fgrid">
+    <div class="fcard"><h3>Live Fleet Dashboard</h3><p>Per-machine wear/risk gauges, live sensor readout, and a fleet-wide KPI view polling continuously.</p></div>
+    <div class="fcard"><h3>What-If Simulator</h3><p>Move spindle speed, torque, depth-of-cut or runtime and watch the risk gauge and SHAP drivers respond live.</p></div>
+    <div class="fcard"><h3>SHAP Driver View</h3><p>Every prediction ships with a ranked breakdown of which sensor reading is actually driving the number.</p></div>
+    <div class="fcard"><h3>CSV Batch Prediction</h3><p>Upload a spreadsheet of readings and get a wear/risk verdict per row — no pre-loaded numbers, real model response.</p></div>
+    <div class="fcard"><h3>Tool-Change Workflow</h3><p>An operator logs whether a tool was genuinely worn when changed — a labelled event that closes the ML loop.</p></div>
+    <div class="fcard"><h3>Model Feedback Scoreboard</h3><p>Aggregates operator verdicts into a live accuracy read, with a statistically honest confidence interval.</p></div>
+    <div class="fcard"><h3>Conversational Assistant</h3><p>Ask about a machine's status in plain language; answered by a hosted LLM grounded in that machine's live data.</p></div>
+    <div class="fcard"><h3>Multi-Tenant Accounts</h3><p>Every plant's machines, history and scrap-saved total are scoped to its own account and persist across restarts.</p></div>
+  </div>
+
+  <div class="impact-row">
+    <div>
+      <div class="h4">Who Benefits</div>
+      <p><strong>Operators</strong> get a live, explained wear reading at the machine instead of a guess from a calendar. <strong>Plant managers</strong> get the fleet-wide view — which machines are at risk now, and evidence to plan maintenance windows around production.</p>
+    </div>
+    <div>
+      <div class="h4">What It Reduces</div>
+      <p>Waste in <em>both</em> directions: parts scrapped by an undetected worn tool, and tools discarded early with usable carbide life still in them — the two costs a fixed schedule can never simultaneously avoid.</p>
+    </div>
+    <div>
+      <div class="h4">Why It Scales Down-Market</div>
+      <p>Built on standard telemetry — speed, torque, temperature, runtime — rather than proprietary sensor hardware, so small and mid-sized job shops can adopt it without a vendor monitoring-suite budget.</p>
+    </div>
+  </div>
+
+  <div class="pagefoot">
+    <span>Metrik <span class="dot">·</span> Innovation Summary</span>
+    <span>07 / 08</span>
+  </div>
+</section>
+
+<!-- ============================================================ PAGE 8 — DIFFERENTIATION + FUTURE ============================================================ -->
+<section class="page" id="p8">
+  <div class="pagehead">
+    <div class="eyebrow">07 · Differentiation &amp; What's Next</div>
+    <h2>Where this stands, and where it goes.</h2>
+  </div>
+
+  <div class="final-grid">
+    <div>
+      <span class="tag">Why It Stands Out</span>
+      <ul>
+        <li>Grounds machine learning against a trusted physics equation instead of shipping a pure black box.</li>
+        <li>Reports its own validation-leakage gap (10.7×) rather than quoting the flattering number.</li>
+        <li>Explains every prediction with SHAP; never hands over a score with no reason attached.</li>
+        <li>Closes the loop with real operator verdicts, honestly caveated for sampling bias.</li>
+      </ul>
+    </div>
+    <div>
+      <span class="tag">Current Implementation <span class="badge implemented" style="margin-left:4px;">Working prototype</span></span>
+      <ul>
+        <li>Full-stack app: FastAPI backend, React dashboard, SQLite persistence, multi-tenant auth.</li>
+        <li>Both models trained, calibrated, and leave-one-tool-out / cross-validated with reported metrics.</li>
+        <li>CSV batch prediction, What-If simulator, tool-change workflow, and feedback scoreboard all working end-to-end.</li>
+      </ul>
+    </div>
+    <div>
+      <span class="tag">Current Prototype Scope <span class="badge simulated" style="margin-left:4px;">Honest limits</span></span>
+      <ul>
+        <li>Demo telemetry replays real recorded PHM 2010 signals; not yet wired to a live shop-floor sensor feed.</li>
+        <li>The risk classifier trains on a synthetic benchmark, not field failure data — stated plainly, not hidden.</li>
+        <li>Not yet pilot-tested with an external shop; no field deployment exists today.</li>
+      </ul>
+    </div>
+    <div>
+      <span class="tag">Future Potential <span class="badge future" style="margin-left:4px;">Next steps</span></span>
+      <ul>
+        <li>Live sensor / PLC integration with a partner machine shop for a real pilot.</li>
+        <li>Extend wear-model generalization across work materials beyond steel.</li>
+        <li>Mobile / edge-side inference for shop floors without a fixed workstation.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="closeblock">
+    <p>Metrik doesn't ask a shop to trust a black box — it grounds a machine-learning wear estimate in the physics the industry already trusts, explains every number it shows, and reports its own validation honestly enough to survive scrutiny. That combination, not any single model, is the innovation.</p>
+    <div class="wm">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+        <path d="M2 16.5 C6 16, 9 14, 11.5 9.5 S16 3.5, 18 3" stroke="#cfe83a" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <circle cx="11.5" cy="9.5" r="1.9" fill="#cfe83a"/>
+      </svg>
+      <span>Metrik</span>
+    </div>
+  </div>
+
+  <div class="pagefoot">
+    <span>Metrik <span class="dot">·</span> Innovation Summary</span>
+    <span>08 / 08</span>
+  </div>
+</section>
+
+</body>
+</html>

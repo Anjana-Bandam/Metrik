@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Metrik — Innovation Presentation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="stage-wrap">
+  <div class="stage" id="stage">
+
+    <!-- ============================================================ SLIDE 1 — PROJECT & TEAM ============================================================ -->
+    <section class="slide" id="slide-1" data-slide="1">
+      <div class="s1-bg" aria-hidden="true"></div>
+      <div class="s1-topbar">
+        <div class="wordmark">
+          <div class="mark">
+            <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+              <path d="M2 6.5 H18" stroke="#0E0F12" stroke-width="1.2" stroke-dasharray="2 2" stroke-linecap="round" opacity=".5"/>
+              <path d="M2 16.5 C6 16, 9 14, 11.5 9.5 S16 3.5, 18 3" stroke="#0E0F12" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+              <circle cx="11.5" cy="9.5" r="1.9" fill="#0E0F12"/>
+            </svg>
+          </div>
+          <span>Metrik</span>
+        </div>
+        <div class="doctag">Innovation Presentation</div>
+      </div>
+
+      <div class="s1-hero">
+        <h1 class="reveal-up" style="--d:0">Change the tool<br><em>before it scraps</em><br>the part.</h1>
+        <p class="s1-tagline reveal-up" style="--d:1">AI-powered predictive maintenance for CNC cutting tools — physics-grounded, explainable, and validated the way an engineering paper is validated.</p>
+      </div>
+
+      <div class="s1-gauge reveal-up" style="--d:1">
+        <svg width="230" height="250" viewBox="0 0 210 230">
+          <circle cx="105" cy="105" r="88" fill="none" stroke="#2a2d35" stroke-width="14"/>
+          <path d="M 27 148 A 88 88 0 1 1 183 148" fill="none" stroke="#cfe83a" stroke-width="14" stroke-linecap="round" stroke-dasharray="345" stroke-dashoffset="80"/>
+          <text x="105" y="98" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="40" fill="#ffffff">78</text>
+          <text x="105" y="122" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#9a9da6">% flank wear</text>
+          <text x="105" y="142" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#6b6f78">± 4.2% confidence band</text>
+        </svg>
+      </div>
+
+      <div class="s1-team reveal-up" style="--d:2">
+        <div class="team-item"><span class="k">Team Name</span><span class="v placeholder">[Team Name]</span></div>
+        <div class="team-item"><span class="k">College / Organization</span><span class="v placeholder">[College / Organization]</span></div>
+        <div class="team-item"><span class="k">Team Members</span><span class="v">Anjana Bandam<span class="placeholder"> · [Add teammates]</span></span></div>
+        <div class="team-item"><span class="k">Faculty Mentor</span><span class="v placeholder">[If applicable]</span></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SLIDE 2 — PROBLEM ============================================================ -->
+    <section class="slide" id="slide-2" data-slide="2">
+      <header class="s-head">
+        <div class="eyebrow">01 · The Problem</div>
+        <h2>Tool wear is invisible until it isn't.</h2>
+      </header>
+
+      <div class="slide-body">
+      <div class="story-row">
+        <div class="story-card">
+          <div class="story-idx">01</div>
+          <div class="story-k">Current Situation</div>
+          <p>Tools are changed on a fixed schedule — every N parts, every shift — whether they need it or not.</p>
+        </div>
+        <div class="story-arrow">→</div>
+        <div class="story-card">
+          <div class="story-idx">02</div>
+          <div class="story-k">Problem</div>
+          <p>Flank wear develops at the tool tip, inside the cut. No operator can see it forming.</p>
+        </div>
+        <div class="story-arrow">→</div>
+        <div class="story-card">
+          <div class="story-idx">03</div>
+          <div class="story-k">Consequence</div>
+          <p>Too early → usable carbide life discarded. Too late → scrapped parts, drift, tool fracture risk.</p>
+        </div>
+        <div class="story-arrow">→</div>
+        <div class="story-card story-card--accent">
+          <div class="story-idx">04</div>
+          <div class="story-k">Need</div>
+          <p>A continuous, physics-grounded wear signal an operator can trust — not a calendar guess.</p>
+        </div>
+      </div>
+
+      <div class="challenge-row">
+        <div class="challenge-chip">
+          <span class="chip-lbl">Existing challenge</span>
+          Fixed schedules can't see actual tool condition — they're wrong in one direction every time.
+        </div>
+        <div class="challenge-chip">
+          <span class="chip-lbl">Existing challenge</span>
+          Vendor monitoring hardware is expensive and hands over an opaque score nobody can verify.
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SLIDE 3 — SOLUTION / ARCHITECTURE ============================================================ -->
+    <section class="slide" id="slide-3" data-slide="3">
+      <header class="s-head">
+        <div class="eyebrow">02 · The Solution</div>
+        <h2>From spindle telemetry to a tool-change decision.</h2>
+      </header>
+      <p class="s-sub">Metrik reads live spindle telemetry, scores wear and risk with two independently validated models grounded in machining physics, explains every number, and hands the decision to the operator.</p>
+
+      <div class="slide-body">
+      <div class="flow5">
+        <div class="flow-stage">
+          <div class="flow-idx">INPUT</div>
+          <h3>Spindle Telemetry</h3>
+          <ul><li>Speed, torque, temperature, runtime</li><li>3-axis force / vibration / acoustic emission</li></ul>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-stage">
+          <div class="flow-idx">PROCESSING</div>
+          <h3>Feature Engineering</h3>
+          <ul><li>Baseline-relative windowing</li><li>Missing-sensor fallback</li></ul>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-stage">
+          <div class="flow-idx">INTELLIGENCE</div>
+          <h3>Dual Model + Physics</h3>
+          <ul><li>XGBoost wear + risk models</li><li>Taylor life baseline + SHAP</li></ul>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-stage">
+          <div class="flow-idx">OUTPUT</div>
+          <h3>Decision-Ready Estimate</h3>
+          <ul><li>Wear % / risk % + confidence</li><li>Ranked drivers, remaining life</li></ul>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-stage flow-stage--accent">
+          <div class="flow-idx">USER ACTION</div>
+          <h3>Operator Decides</h3>
+          <ul><li>Acknowledge or log a change</li><li>Verdict feeds accuracy scoreboard</li></ul>
+        </div>
+      </div>
+
+      <div class="note-strip">Every endpoint is read-and-recommend — Metrik never stops, throttles, or reconfigures a machine.</div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SLIDE 4 — AI COMPONENT ============================================================ -->
+    <section class="slide" id="slide-4" data-slide="4">
+      <header class="s-head">
+        <div class="eyebrow">03 · The AI Component</div>
+        <h2>Two models, kept deliberately separate.</h2>
+      </header>
+
+      <div class="slide-body">
+      <div class="model-cols">
+        <div class="model-card">
+          <div class="model-tag">Scrap-Risk Model</div>
+          <p class="model-q">Probability this cut ends in a wear-driven scrap event</p>
+          <div class="model-specs">
+            <div><span class="k">Data</span><span class="v">AI4I 2020 — synthetic benchmark</span></div>
+            <div><span class="k">Validation</span><span class="v">5×10 repeated stratified CV</span></div>
+            <div><span class="k">Output</span><span class="v">Calibrated probability (Platt scaling)</span></div>
+          </div>
+          <div class="model-metrics">
+            <div class="mm"><span class="n">0.983</span><span class="l">ROC-AUC</span></div>
+            <div class="mm"><span class="n">0.702</span><span class="l">PR-AUC</span></div>
+          </div>
+        </div>
+
+        <div class="model-card model-card--accent">
+          <div class="model-tag">Flank-Wear Model</div>
+          <p class="model-q">Flank wear right now, in millimetres — against the ISO 8688 limit</p>
+          <div class="model-specs">
+            <div><span class="k">Data</span><span class="v">PHM 2010 — real, physically measured</span></div>
+            <div><span class="k">Validation</span><span class="v">Leave-one-tool-out (unseen cutter)</span></div>
+            <div><span class="k">Output</span><span class="v">Millimetres of flank wear</span></div>
+          </div>
+          <div class="model-metrics">
+            <div class="mm"><span class="n">16.0µm</span><span class="l">MAE</span></div>
+            <div class="mm"><span class="n">0.724</span><span class="l">R²</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipeline-strip">
+        <div class="ps-step"><span class="ps-n">1</span>7 condition-monitoring channels, windowed every 2s, baseline-relative</div>
+        <div class="ps-arrow">→</div>
+        <div class="ps-step"><span class="ps-n">2</span>XGBoost regression + classification</div>
+        <div class="ps-arrow">→</div>
+        <div class="ps-step"><span class="ps-n">3</span>Taylor tool-life equation blend, V·T<sup>n</sup>=C</div>
+        <div class="ps-arrow">→</div>
+        <div class="ps-step"><span class="ps-n">4</span>SHAP TreeExplainer, per prediction</div>
+      </div>
+
+      <div class="stack-chips">
+        <span>XGBoost</span><span>SHAP</span><span>FastAPI</span><span>React 18</span><span>SQLite</span><span>Taylor's Tool-Life Equation</span><span>Groq · Llama 3.3 70B</span>
+      </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SLIDE 5 — PROTOTYPE ============================================================ -->
+    <section class="slide" id="slide-5" data-slide="5">
+      <header class="s-head">
+        <div class="eyebrow">04 · The Prototype</div>
+        <h2>A working, end-to-end application.</h2>
+      </header>
+
+      <div class="slide-body">
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="browser-url">metrik.app / dashboard</span>
+        </div>
+        <div class="browser-body">
+          <div class="mock-sidebar">
+            <div class="mock-logo">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M2 16.5 C6 16, 9 14, 11.5 9.5 S16 3.5, 18 3" stroke="#cfe83a" stroke-width="2.2" stroke-linecap="round" fill="none"/><circle cx="11.5" cy="9.5" r="1.9" fill="#cfe83a"/></svg>
+              Metrik
+            </div>
+            <div class="mock-nav-item active">Dashboard</div>
+            <div class="mock-nav-item">Simulation</div>
+            <div class="mock-nav-item">Reports</div>
+            <div class="mock-nav-item">Settings</div>
+          </div>
+          <div class="mock-main">
+            <div class="mock-kpis">
+              <div class="kpi"><span class="kpi-n">6</span><span class="kpi-l">Active machines</span></div>
+              <div class="kpi"><span class="kpi-n" style="color:#ff6b5a">1</span><span class="kpi-l">Active warnings</span></div>
+              <div class="kpi"><span class="kpi-n">42<small>min</small></span><span class="kpi-l">Avg. remaining life</span></div>
+              <div class="kpi"><span class="kpi-n">$4,970</span><span class="kpi-l">Scrap saved</span></div>
+            </div>
+            <div class="mock-cards">
+              <div class="mcard">
+                <div class="mcard-top"><span>VMC-03 DMG Mori</span><span class="mchip running">Running</span></div>
+                <div class="mcard-loc">Bay 2 · replay</div>
+                <div class="mcard-risk" style="color:#ff6b5a">78<small>%</small></div>
+                <div class="mcard-sub">scrap risk</div>
+                <div class="mcard-bar"><div style="width:78%;background:#ff6b5a"></div></div>
+                <div class="mcard-bar-lbl"><span>Tool wear</span><span>0.243 / 0.30 mm</span></div>
+              </div>
+              <div class="mcard">
+                <div class="mcard-top"><span>VMC-01 Haas VF2</span><span class="mchip running">Running</span></div>
+                <div class="mcard-loc">Bay 1 · replay</div>
+                <div class="mcard-risk" style="color:#cfe83a">21<small>%</small></div>
+                <div class="mcard-sub">scrap risk</div>
+                <div class="mcard-bar"><div style="width:21%;background:#cfe83a"></div></div>
+                <div class="mcard-bar-lbl"><span>Tool wear</span><span>0.061 / 0.30 mm</span></div>
+              </div>
+              <div class="mcard offline">
+                <div class="mcard-top"><span>VMC-06 Jyoti DX200</span><span class="mchip off">Offline</span></div>
+                <div class="mcard-loc">Bay 3 · replay</div>
+                <div class="mcard-risk" style="color:#5a5f68">—</div>
+                <div class="mcard-sub">no live signal</div>
+              </div>
+            </div>
+            <div class="mock-shap">
+              <div class="mock-shap-title">Top SHAP drivers — VMC-03</div>
+              <div class="shap-row"><div class="shap-bar" style="width:62%;background:#cfe83a"></div><span>Spindle Torque</span></div>
+              <div class="shap-row"><div class="shap-bar" style="width:41%;background:#8f9e1e"></div><span>Cumulative Runtime</span></div>
+              <div class="shap-row"><div class="shap-bar" style="width:24%;background:#565c1a"></div><span>Process Temperature</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mock-caption">UI reconstructed from the project's real React components (MachineCard.jsx, GaugeChart.jsx) and live values from its own demo fleet.</div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SLIDE 6 — INNOVATION ============================================================ -->
+    <section class="slide" id="slide-6" data-slide="6">
+      <header class="s-head">
+        <div class="eyebrow">05 · The Innovation</div>
+        <h2>Not "we use AI" — a specific, defensible combination.</h2>
+      </header>
+
+      <div class="slide-body">
+      <div class="innov-flow">
+        <div class="innov-stage">
+          <div class="innov-k">Traditional</div>
+          <p>A single ML score, trained and tested on the same tool, presented with no explanation.</p>
+        </div>
+        <div class="innov-arrow">→</div>
+        <div class="innov-stage">
+          <div class="innov-k">Gap</div>
+          <p>Random-split validation inflates results 10.7× — and operators can't verify or trust an opaque number.</p>
+        </div>
+        <div class="innov-arrow">→</div>
+        <div class="innov-stage innov-stage--accent">
+          <div class="innov-k">Metrik's Innovation</div>
+          <p>Physics-grounded model + honest leave-one-tool-out validation + SHAP explanation + closed operator feedback loop.</p>
+        </div>
+        <div class="innov-arrow">→</div>
+        <div class="innov-stage">
+          <div class="innov-k">Advantage</div>
+          <p>A number the operator can verify against physics, understand, and trust enough to act on.</p>
+        </div>
+      </div>
+
+      <div class="innov-cards">
+        <div class="icard2"><span class="num">01</span><h3>Physics-Grounded</h3><p>Checked against Taylor's tool-life equation (1907), not a pure black box.</p></div>
+        <div class="icard2"><span class="num">02</span><h3>Honest Validation</h3><p>Reports its own 10.7× optimism gap instead of the flattering number.</p></div>
+        <div class="icard2"><span class="num">03</span><h3>Explainable</h3><p>SHAP ranks the exact driver behind every prediction.</p></div>
+        <div class="icard2"><span class="num">04</span><h3>Closed Feedback Loop</h3><p>Operator verdicts score the model with a Wilson-interval scoreboard.</p></div>
+      </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SLIDE 7 — IMPACT ============================================================ -->
+    <section class="slide" id="slide-7" data-slide="7">
+      <header class="s-head">
+        <div class="eyebrow">06 · Impact</div>
+        <h2>Who it helps, and what it changes.</h2>
+      </header>
+
+      <div class="slide-body">
+      <div class="impact-grid">
+        <div class="impact-card">
+          <span class="impact-tag demonstrated">Demonstrated</span>
+          <h3>+19.3% Tool Life Recovered</h3>
+          <p>Vs. a practical fixed schedule, in offline validation across three cutters — zero tools changed late.</p>
+        </div>
+        <div class="impact-card">
+          <span class="impact-tag expected">Expected</span>
+          <h3>Operators Act on Evidence</h3>
+          <p>A live, explained wear reading at the machine replaces a calendar guess.</p>
+        </div>
+        <div class="impact-card">
+          <span class="impact-tag expected">Expected</span>
+          <h3>Waste Cut in Both Directions</h3>
+          <p>Fewer scrapped parts from undetected wear, fewer tools discarded with life left in them.</p>
+        </div>
+        <div class="impact-card">
+          <span class="impact-tag potential">Potential</span>
+          <h3>Accessible to Small Shops</h3>
+          <p>Standard telemetry, no proprietary sensor hardware — scales down-market where vendor suites can't.</p>
+        </div>
+        <div class="impact-card">
+          <span class="impact-tag potential">Potential</span>
+          <h3>Fleet-Wide Visibility</h3>
+          <p>Plant managers plan maintenance windows around production, not around failures.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ SLIDE 8 — ROADMAP ============================================================ -->
+    <section class="slide" id="slide-8" data-slide="8">
+      <header class="s-head">
+        <div class="eyebrow">07 · Roadmap</div>
+        <h2>Where this stands, and where it goes.</h2>
+      </header>
+
+      <div class="slide-body">
+      <div class="road">
+        <div class="road-stage road-stage--current">
+          <div class="road-dot"></div>
+          <h3>Current Prototype</h3>
+          <ul><li>Dual models trained &amp; validated</li><li>Full-stack app, feedback loop</li></ul>
+        </div>
+        <div class="road-stage">
+          <div class="road-dot"></div>
+          <h3>Validation</h3>
+          <ul><li>Pilot with a real machine shop</li><li>Live sensor / PLC integration</li></ul>
+        </div>
+        <div class="road-stage">
+          <div class="road-dot"></div>
+          <h3>Integration</h3>
+          <ul><li>Cross-material generalization</li><li>Broader sensor packages</li></ul>
+        </div>
+        <div class="road-stage">
+          <div class="road-dot"></div>
+          <h3>Deployment</h3>
+          <ul><li>Field pilot at a partner shop</li></ul>
+        </div>
+        <div class="road-stage">
+          <div class="road-dot"></div>
+          <h3>Scale</h3>
+          <ul><li>Mobile / edge inference</li><li>Multi-shop rollout</li></ul>
+        </div>
+      </div>
+
+      <div class="closing">Metrik doesn't ask a shop to trust a black box — it grounds a wear estimate in physics, explains every number, and reports its own validation honestly enough to survive scrutiny.</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ============================================================ NAVIGATION CHROME ============================================================ -->
+<div class="nav-controls">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">‹</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">›</button>
+  <div class="slide-counter"><span id="curNum">1</span> / <span id="totalNum">8</span></div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<script src="js/presentation.js"></script>
+</body>
+</html>
