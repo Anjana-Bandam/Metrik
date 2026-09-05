@@ -16,3 +16,6 @@ services:
     envVars:
       - key: GROQ_API_KEY
         sync: false   # set this manually in the Render dashboard - do not commit it
+      - key: PYTHON_VERSION
+        value: 3.12.7   # 3.13 (Render's default) has no prebuilt wheels yet for
+                         # the pinned numpy/scikit-learn/xgboost versions below
