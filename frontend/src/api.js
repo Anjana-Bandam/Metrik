@@ -1,6 +1,11 @@
 // Thin fetch wrapper. Every call attaches the session token, so the backend
 // scopes the response to the logged-in plant account.
-const BASE = "/api";
+//
+// In dev, Vite proxies "/api" to the local FastAPI server (see vite.config.js).
+// In production the frontend and backend are typically separate deployments
+// (e.g. Vercel + Render), so VITE_API_BASE must be set at build time to the
+// deployed backend's full URL (e.g. https://metrik-api.onrender.com/api).
+const BASE = import.meta.env.VITE_API_BASE || "/api";
 const TOKEN_KEY = "metrik-token";
 
 function authHeaders() {

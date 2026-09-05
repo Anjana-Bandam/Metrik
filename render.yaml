@@ -1,0 +1,18 @@
+# Render "Blueprint" config for the Metrik backend.
+# On Render: New + -> Blueprint -> point at this repo -> it reads this file.
+#
+# Note: the free instance type has an EPHEMERAL filesystem - metrik.db
+# resets on every redeploy/restart unless you attach a persistent disk,
+# which requires a paid instance type. Fine for a judging window; see
+# DEPLOYMENT.md if you want the fleet data to survive long-term.
+services:
+  - type: web
+    name: metrik-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false   # set this manually in the Render dashboard - do not commit it

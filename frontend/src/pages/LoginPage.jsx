@@ -186,6 +186,11 @@ export default function LoginPage() {
                 <label className={labelCls}>Your name</label>
                 <input className={`${inputCls} mt-1.5 mb-4`} placeholder="Anjana"
                        value={form.full_name} onChange={set("full_name")} />
+
+                <p className="text-[11px] text-[#9aa0a8] -mt-1 mb-4">
+                  This is a public hackathon demo — please use a throwaway
+                  password, not one you use elsewhere.
+                </p>
               </>
             )}
 
